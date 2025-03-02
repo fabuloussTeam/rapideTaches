@@ -1,0 +1,40 @@
+<h1>Liste des taches</h1>
+<div id="container">
+    <form id="todo-form">
+        <input
+            type="text"
+            id="todo-input"
+            placeholder="Ajouter une nouvelle tâche"
+        />
+        <button type="submit">Ajouter</button>
+    </form>
+    <ul id="todo-list">
+        <template id="todo-template">
+            <li>
+                <input type="checkbox" />
+                <span class="description"></span>
+            </li>
+        </template>
+
+        {{!-- {{#each todos}}
+            <li>
+                <input type="checkbox" />
+                <span class="description">{{this.description}}</span>
+            </li>
+        {{/each}} --}}
+
+    </ul>
+    <section class="cont">
+
+        {{>categories}}
+        <section>
+            A PROPOS
+        </section>
+
+        {{>temoignage}}
+     
+        <section>
+            Contact
+        </section></section>
+
+</div>
