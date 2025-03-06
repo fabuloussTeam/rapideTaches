@@ -1,0 +1,22 @@
+<h2>Modifier une Tâche</h2>
+<form action="/update/{{task.id}}" method="POST">
+    <label for="title">Titre:</label>
+    <input type="text" id="title" name="title" value="{{task.title}}" required>
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" required>{{task.description}}</textarea>
+    <label for="priority">Priorité:</label>
+    <select id="priority" name="priority">
+        <option value="Faible" {{#if (eq task.priority "Faible")}}selected{{/if}}>Faible</option>
+        <option value="Moyenne" {{#if (eq task.priority "Moyenne")}}selected{{/if}}>Moyenne</option>
+        <option value="Élevée" {{#if (eq task.priority "Élevée")}}selected{{/if}}>Élevée</option>
+    </select>
+    <label for="dueDate">Date limite:</label>
+    <input type="datetime-local" id="dueDate" name="dueDate" value="{{formatDate task.dueDate}}" required>
+    <label for="userId">Assigner à:</label>
+    <select id="userId" name="userId" required>
+        {{#each users}}
+            <option value="{{this.id}}" {{#if (eq this.id task.userId)}}selected{{/if}}>{{this.name}}</option>
+        {{/each}}
+    </select>
+    <button type="submit">Modifier</button>
+</form>

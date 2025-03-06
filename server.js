@@ -1,43 +1,40 @@
-//Doit etre en debut de fichier pour charger les variables d'environnement
-import "dotenv/config";
+const express = require('express');
+const exphbs = require('express-handlebars');
+const path = require('path');
+const routes = require('./routes');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-//importer les routes
-import routerExterne from "./routes.js";
+const app = express(); // Initialize the app
 
-// Importation des fichiers et librairies
-import { engine } from "express-handlebars";
-import express, { json } from "express";
-import helmet from "helmet";
-import compression from "compression";
-import cors from "cors";
-import cspOption from "./csp-options.js";
 
-// Crréation du serveur express
-const app = express();
-app.engine("handlebars", engine()); //Pour indiquer a express que l'on utilise handlebars
-app.set("view engine", "handlebars"); //Pour indiquer le rendu des vues
-app.set("views", "./views"); //Pour indiquer le dossier des vues
+// Configuration de Handlebars
+app.engine('hbs', exphbs.engine({ extname: '.hbs' }));
+app.set('view engine', 'hbs');
+app.set('views', path.join(__dirname, 'views')); // Chemin absolu vers le répertoire views
+// Middleware pour les fichiers statiques
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
 
-// Ajout de middlewares
-app.use(helmet(cspOption));
-app.use(compression());
-app.use(cors());
-app.use(json());
+// Routes
+app.use('/', routes);
 
-//Middeleware integre a express pour gerer la partie static du serveur
-//le dossier 'public' est la partie statique de notre serveur
-app.use(express.static("public"));
-
-// Ajout des routes
-app.use(routerExterne);
-
-// Renvoyer une erreur 404 pour les routes non définies
-app.use((request, response) => {
-    // Renvoyer simplement une chaîne de caractère indiquant que la page n'existe pas
-    response.status(404).send(`${request.originalUrl} Route introuvable.`);
+const hbs = exphbs.create({
+    extname: '.hbs',
+    helpers: {
+        formatDate: function (date) {
+            return new Date(date).toLocaleString(); // Formater la date
+        },
+        eq: function (a, b) {
+            return a === b; // Helper pour comparer des valeurs
+        },
+    },
 });
 
-//Démarrage du serveur
-app.listen(process.env.PORT);
-console.info("Serveur démarré :");
-console.info(`http://localhost:${process.env.PORT}`);
+app.engine('hbs', hbs.engine);
+
+// Démarrer le serveur
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Serveur démarré sur http://localhost:${PORT}`);
+});

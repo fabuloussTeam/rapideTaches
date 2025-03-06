@@ -1,24 +1,27 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
 }
 
-model todo {
-  id            Int     @id @default(autoincrement())
-  description   String
-  est_faite     Boolean @default(false)
-  auteur        String?
+model Task {
+    id          Int      @id @default(autoincrement())
+    title       String
+    description String
+    priority    String   @default("Moyenne")
+    dueDate     DateTime // Date limite de la tâche
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    userId      Int      // Clé étrangère pour l'utilisateur assigné
+    user        User     @relation(fields: [userId], references: [id])
 }
 
-model user{
-  id            Int     @id @default(autoincrement())
-  email         String
+model User {
+    id          Int      @id @default(autoincrement())
+    name        String
+    email       String   @unique
+    tasks       Task[]
 }
-

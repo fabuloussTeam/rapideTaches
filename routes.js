@@ -1,76 +1,80 @@
-import { Router } from "express";
-import { addTodo, getTodos, updateTodo } from "./model/todo.js";
+const express = require('express');
+const router = express.Router();
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
-const router = Router();
-
-//Definition des routes
-
-// Route pour la page d'accueil
-router.get("/", async (request, response) => {
-    response.render("index", {
-        titre: "Accueil",
-        styles: ["./css/style.css", "./css/index.css"],
-        scripts: ["./js/main.js"],
-        todos: await getTodos(),
+// Page d'accueil
+router.get('/', async (req, res) => {
+    const tasks = await prisma.task.findMany({
+        include: { user: true }, // Inclure les informations de l'utilisateur
     });
+    const users = await prisma.user.findMany(); // Récupérer tous les utilisateurs
+    res.render('index', { tasks, users });
 });
 
-// Route pour la page de documentation
-router.get("/documents", (request, response) => {
-    response.render("documents", {
-        titre: "Documents",
-        styles: ["./css/style.css", "./css/documents.css"],
-        scripts: ["./js/main.js"],
+// Créer un utilisateur
+router.post('/user/add', async (req, res) => {
+    const { name, email } = req.body;
+    await prisma.user.create({
+        data: {
+            name,
+            email,
+        },
     });
+    res.redirect('/');
 });
 
-// Route pour obtenir la liste des taches
-router.get("/api/todos", async (request, response) => {
-    try {
-        const todos = await getTodos();
-        return response.status(200).json(todos);
-    } catch (error) {
-        return response.status(400).json({ error: error.message });
-    }
+// Supprimer une tâche
+router.post('/delete/:id', async (req, res) => {
+    const { id } = req.params;
+    await prisma.task.delete({
+        where: { id: parseInt(id) },
+    });
+    res.redirect('/');
 });
 
-// Route pour ajouter une tache
-router.post("/api/todo", async (request, response) => {
-    try {
-        const { description } = request.body;
-        const todo = await addTodo(description);
-        return response
-            .status(200)
-            .json({ todo, message: "Tache ajoutée avec succès" });
-    } catch (error) {
-        return response.status(400).json({ error: error.message });
-    }
+
+// Ajouter une tâche
+router.post('/add', async (req, res) => {
+    const { title, description, priority, dueDate, userId } = req.body;
+    await prisma.task.create({
+        data: {
+            title,
+            description,
+            priority,
+            dueDate: new Date(dueDate), // Convertir en objet Date
+            userId: parseInt(userId),   // Assigner à l'utilisateur
+        },
+    });
+    res.redirect('/');
 });
 
-// Route pour mettre à jour une tache
-router.patch("/api/todo/:id", async (request, response) => {
-    try {
-        const id = parseInt(request.params.id);
-        const todo = await updateTodo(id);
-        return response
-            .status(200)
-            .json({ todo, message: "Tache mise à jour avec succès" });
-    } catch (error) {
-        return response.status(400).json({ error: error.message });
-    }
+// Afficher le formulaire de modification
+router.get('/edit/:id', async (req, res) => {
+    const task = await prisma.task.findUnique({
+        where: { id: parseInt(req.params.id) },
+        include: { user: true }, // Inclure les informations de l'utilisateur
+    });
+    const users = await prisma.user.findMany(); // Récupérer tous les utilisateurs
+    res.render('edit', { task, users });
 });
 
-//Route pour mettre a jour une tache en utilisant la methode PUT avec query
-router.put("/api/todo", async (request, response) => {
-    try {
-        const id = parseInt(request.query.id);
-        const todo = await updateTodo(id);
-        return response
-            .status(200)
-            .json({ todo, message: "Tache mise à jour avec succès" });
-    } catch (error) {
-        return response.status(400).json({ error: error.message });
-    }
+// Mettre à jour une tâche
+router.post('/update/:id', async (req, res) => {
+    const { id } = req.params;
+    const { title, description, priority, dueDate, userId } = req.body;
+    await prisma.task.update({
+        where: { id: parseInt(id) },
+        data: {
+            title,
+            description,
+            priority,
+            dueDate: new Date(dueDate),
+            userId: parseInt(userId),
+        },
+    });
+    res.redirect('/');
 });
 
-export default router;
+
+module.exports = router;
