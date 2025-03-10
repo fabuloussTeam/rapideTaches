@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestion des Tâches</title>
     <link rel="stylesheet" href="/css/styles.css">
+    {{#each styles}}
+        <link rel="stylesheet" href="{{this}}">
+    {{/each}}
+
+    <!-- JS spécifique -->
+    {{#each scripts}}
+        <script type="module" src="{{this}}"></script>
+    {{/each}}
 </head>
 <body>
     {{> header}}

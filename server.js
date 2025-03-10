@@ -1,24 +1,17 @@
-const express = require('express');
-const exphbs = require('express-handlebars');
-const path = require('path');
-const routes = require('./routes');
-const { PrismaClient } = require('@prisma/client');
+import express from 'express';
+import exphbs from 'express-handlebars';
+import path from 'path';
+import { PrismaClient } from '@prisma/client';
+import cspOption from "./csp-options.js";
+import helmet from 'helmet';
 const prisma = new PrismaClient();
 
 const app = express(); // Initialize the app
 
+// Importer les routes
+import routerExterne from "./routes.js";
 
 // Configuration de Handlebars
-app.engine('hbs', exphbs.engine({ extname: '.hbs' }));
-app.set('view engine', 'hbs');
-app.set('views', path.join(__dirname, 'views')); // Chemin absolu vers le répertoire views
-// Middleware pour les fichiers statiques
-app.use(express.static(path.join(__dirname, 'public')));
-app.use(express.urlencoded({ extended: true }));
-
-// Routes
-app.use('/', routes);
-
 const hbs = exphbs.create({
     extname: '.hbs',
     helpers: {
@@ -32,6 +25,16 @@ const hbs = exphbs.create({
 });
 
 app.engine('hbs', hbs.engine);
+app.set('view engine', 'hbs');
+app.set("views", "./views");
+
+// Middleware pour les fichiers statiques
+app.use(helmet(cspOption));
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+
+// Ajout des routes
+app.use(routerExterne);
 
 // Démarrer le serveur
 const PORT = process.env.PORT || 3000;

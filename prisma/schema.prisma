@@ -12,7 +12,8 @@ model Task {
     title       String
     description String
     priority    String   @default("Moyenne")
-    dueDate     DateTime // Date limite de la tâche
+    dueDate     DateTime
+    status      String   @default("À faire") // Statut de la tâche
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
     userId      Int      // Clé étrangère pour l'utilisateur assigné
