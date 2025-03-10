@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
         select.addEventListener('change', async (event) => {
             const taskId = event.target.dataset.taskId;
             const newStatus = event.target.value;
-            const taskElement = event.target.closest('li'); // L'élément <li> de la tâche
+            const taskElement = event.target.closest('li'); 
 
             try {
                 const response = await fetch(`/update-status/${taskId}`, {
@@ -19,8 +19,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (response.ok) {
                     const data = await response.json();
                     const newColumn = document.querySelector(`#column-${data.status.toLowerCase().replace(/ /g, '-')}`);
-                    const taskList = newColumn.querySelector('ul');
-                    taskList.appendChild(taskElement); // Déplacer la tâche
+                    if (newColumn) {
+                        const taskList = newColumn.querySelector('ul');
+                        taskList.appendChild(taskElement); // Déplacer la tâche
+                    } else {
+                        console.error('Colonne non trouvée pour le statut:', data.status);
+                    }
                 } else {
                     console.error('Erreur lors de la mise à jour du statut');
                 }
