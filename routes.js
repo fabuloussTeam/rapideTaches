@@ -63,7 +63,8 @@ router.post('/update-status/:id', async (req, res) => {
         where: { id: parseInt(id) },
         data: { status },
     });
-    res.json({ status: updatedTask.status }); // Renvoyer le nouveau statut
+    console.log("Statut mis à jour:", updatedTask.status); // Log pour vérifier le statut
+    res.json({ status: updatedTask.status });
 });
 
 // Supprimer une tâche
@@ -73,6 +74,48 @@ router.post('/delete/:id', async (req, res) => {
         where: { id: parseInt(id) },
     });
     res.redirect('/');
+});
+
+
+
+// Afficher le formulaire de modification d'une tâche
+router.get('/edit/:id', async (req, res) => {
+    const taskId = parseInt(req.params.id);
+    try {
+        const task = await prisma.task.findUnique({
+            where: { id: taskId },
+            include: { user: true }, // Inclure les informations de l'utilisateur assigné
+        });
+        const users = await prisma.user.findMany(); // Récupérer tous les utilisateurs pour le formulaire
+        res.render('edit', { task, users });
+    } catch (error) {
+        console.error("Erreur lors de la récupération de la tâche:", error);
+        res.status(500).send("Erreur lors de la récupération de la tâche.");
+    }
+});
+
+// Mettre à jour une tâche
+router.post('/update/:id', async (req, res) => {
+    const taskId = parseInt(req.params.id);
+    const { title, description, priority, dueDate, userId, status } = req.body;
+
+    try {
+        await prisma.task.update({
+            where: { id: taskId },
+            data: {
+                title,
+                description,
+                priority,
+                dueDate: new Date(dueDate),
+                userId: parseInt(userId),
+                status,
+            },
+        });
+        res.redirect('/'); // Rediriger vers la page d'accueil après la mise à jour
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour de la tâche:", error);
+        res.status(500).send("Erreur lors de la mise à jour de la tâche.");
+    }
 });
 
 export default router;
