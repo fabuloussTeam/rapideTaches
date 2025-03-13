@@ -16,6 +16,7 @@
                                     <button type="submit">Supprimer</button>
                                 </form>
                                 <a href="/edit/{{this.id}}">Modifier</a>
+                                 <a href="/task/{{this.id}}">Détails</a>
                                 <select class="status-select" data-task-id="{{this.id}}">
                                     <option value="À faire" {{#if (eq this.status "À faire")}}selected{{/if}}>À faire</option>
                                     <option value="En cours" {{#if (eq this.status "En cours")}}selected{{/if}}>En cours</option>
@@ -42,6 +43,7 @@
                                     <button type="submit">Supprimer</button>
                                 </form>
                                 <a href="/edit/{{this.id}}">Modifier</a>
+                                 <a href="/task/{{this.id}}">Détails</a> <!-- Lien vers les detqils de la tâche -->
                                 <select class="status-select" data-task-id="{{this.id}}">
                                     <option value="À faire" {{#if (eq this.status "À faire")}}selected{{/if}}>À faire</option>
                                     <option value="En cours" {{#if (eq this.status "En cours")}}selected{{/if}}>En cours</option>
@@ -68,6 +70,7 @@
                                     <button type="submit">Supprimer</button>
                                 </form>
                                 <a href="/edit/{{this.id}}">Modifier</a>
+                                 <a href="/task/{{this.id}}">Détails</a> <!-- Lien des details de la tâche -->
                                 <select class="status-select" data-task-id="{{this.id}}">
                                     <option value="À faire" {{#if (eq this.status "À faire")}}selected{{/if}}>À faire</option>
                                     <option value="En cours" {{#if (eq this.status "En cours")}}selected{{/if}}>En cours</option>
@@ -94,6 +97,7 @@
                                     <button type="submit">Supprimer</button>
                                 </form>
                                 <a href="/edit/{{this.id}}">Modifier</a>
+                                <a href="/task/{{this.id}}">Détails</a>
                                 <select class="status-select" data-task-id="{{this.id}}">
                                     <option value="À faire" {{#if (eq this.status "À faire")}}selected{{/if}}>À faire</option>
                                     <option value="En cours" {{#if (eq this.status "En cours")}}selected{{/if}}>En cours</option>
@@ -106,38 +110,4 @@
                 </ul>
             </div>
         </div>
-
-        <!-- Formulaire pour ajouter une tâche -->
-        <h2>Ajouter une Tâche</h2>
-        <form action="/add" method="POST">
-            <label for="title">Titre:</label>
-            <input type="text" id="title" name="title" required>
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required></textarea>
-            <label for="priority">Priorité:</label>
-            <select id="priority" name="priority">
-                <option value="Faible">Faible</option>
-                <option value="Moyenne">Moyenne</option>
-                <option value="Élevée">Élevée</option>
-            </select>
-            <label for="dueDate">Date limite:</label>
-            <input type="datetime-local" id="dueDate" name="dueDate" required>
-            <label for="userId">Assigner à:</label>
-            <select id="userId" name="userId" required>
-                {{#each users}}
-                    <option value="{{this.id}}">{{this.name}}</option>
-                {{/each}}
-            </select>
-            <button type="submit">Ajouter</button>
-        </form>
-
-        <!-- Formulaire pour ajouter un utilisateur -->
-        <h2>Ajouter un Utilisateur</h2>
-        <form action="/user/add" method="POST">
-            <label for="name">Nom:</label>
-            <input type="text" id="name" name="name" required>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-            <button type="submit">Ajouter</button>
-        </form>
     </main>

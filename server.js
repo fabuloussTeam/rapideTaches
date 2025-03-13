@@ -1,6 +1,5 @@
 import express from 'express';
-import exphbs from 'express-handlebars';
-import path from 'path';
+import expressHandlebars from 'express-handlebars';
 import { PrismaClient } from '@prisma/client';
 import cspOption from "./csp-options.js";
 import helmet from 'helmet';
@@ -12,8 +11,8 @@ const app = express(); // Initialize the app
 import routerExterne from "./routes.js";
 
 // Configuration de Handlebars
-const hbs = exphbs.create({
-    extname: '.hbs',
+const handlebars = expressHandlebars.create({
+    extname: '.handlebars',
     helpers: {
         formatDate: function (date) {
             return new Date(date).toLocaleString(); // Formater la date
@@ -24,8 +23,8 @@ const hbs = exphbs.create({
     },
 });
 
-app.engine('hbs', hbs.engine);
-app.set('view engine', 'hbs');
+app.engine('handlebars', handlebars.engine);
+app.set('view engine', 'handlebars');
 app.set("views", "./views");
 
 // Middleware pour les fichiers statiques

@@ -1,0 +1,15 @@
+
+  <h1>Détails de la Tâche</h1>
+    <main>
+        <h2>{{task.title}}</h2>
+        <p><strong>Description:</strong> {{task.description}}</p>
+        <p><strong>Priorité:</strong> {{task.priority}}</p>
+        <p><strong>Date limite:</strong> {{formatDate task.dueDate}}</p>
+        <p><strong>Statut:</strong> {{task.status}}</p>
+        <p><strong>Assignée à:</strong> {{task.user.name}}</p>
+        <p><strong>Créée le:</strong> {{formatDate task.createdAt}}</p>
+        <p><strong>Dernière mise à jour:</strong> {{formatDate task.updatedAt}}</p>
+
+        <a href="/edit/{{task.id}}">Modifier cette tâche</a>
+    </main>
+

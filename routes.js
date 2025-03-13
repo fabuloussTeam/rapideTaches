@@ -118,4 +118,48 @@ router.post('/update/:id', async (req, res) => {
     }
 });
 
+
+// Afficher les détails d'une tâche
+router.get('/task/:id', async (req, res) => {
+    const taskId = parseInt(req.params.id);
+    try {
+        const task = await prisma.task.findUnique({
+            where: { id: taskId },
+            include: { user: true }, // Inclure les informations de l'utilisateur assigné
+        });
+        if (task) {
+            res.render('task-details', { task }); // Afficher la page de détails
+        } else {
+            res.status(404).send("Tâche non trouvée.");
+        }
+    } catch (error) {
+        console.error("Erreur lors de la récupération de la tâche:", error);
+        res.status(500).send("Erreur lors de la récupération de la tâche.");
+    }
+});
+
+//page de creation de compte
+router.get('/addtask', async (request, response) => {
+    const users = await prisma.user.findMany();
+    response.render("add-task", {
+        titre: "add a task ",
+        styles: ["add-task.css"],
+        scripts: ["add-task.js"],
+        users
+      });
+});
+
+//page de creation de compte
+router.get('/adduser', async (request, response) => {
+    response.render("add-user", {
+        titre: "add a user",
+        styles: ["add-user.css"],
+        scripts: ["add-user.js"],
+      });
+});
+
+
+
+
+
 export default router;
