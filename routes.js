@@ -94,13 +94,20 @@ router.get('/edit/:id', async (req, res) => {
     }
 });
 
+
 // Mettre à jour une tâche
 router.post('/update/:id', async (req, res) => {
     const taskId = parseInt(req.params.id);
     const { title, description, priority, dueDate, userId, status } = req.body;
 
     try {
-        await prisma.task.update({
+        // Récupérer la tâche actuelle pour comparer les valeurs
+        const currentTask = await prisma.task.findUnique({
+            where: { id: taskId },
+        });
+
+        // Mettre à jour la tâche
+        const updatedTask = await prisma.task.update({
             where: { id: taskId },
             data: {
                 title,
@@ -111,12 +118,71 @@ router.post('/update/:id', async (req, res) => {
                 status,
             },
         });
+
+        // Enregistrer les modifications dans l'historique
+        const changes = [];
+        if (currentTask.title !== updatedTask.title) {
+            changes.push({
+                taskId,
+                userId: updatedTask.userId,
+                field: "title",
+                oldValue: currentTask.title,
+                newValue: updatedTask.title,
+            });
+        }
+        if (currentTask.description !== updatedTask.description) {
+            changes.push({
+                taskId,
+                userId: updatedTask.userId,
+                field: "description",
+                oldValue: currentTask.description,
+                newValue: updatedTask.description,
+            });
+        }
+        if (currentTask.priority !== updatedTask.priority) {
+            changes.push({
+                taskId,
+                userId: updatedTask.userId,
+                field: "priority",
+                oldValue: currentTask.priority,
+                newValue: updatedTask.priority,
+            });
+        }
+        if (currentTask.dueDate.toISOString() !== updatedTask.dueDate.toISOString()) {
+            changes.push({
+                taskId,
+                userId: updatedTask.userId,
+                field: "dueDate",
+                oldValue: currentTask.dueDate.toISOString(),
+                newValue: updatedTask.dueDate.toISOString(),
+            });
+        }
+        if (currentTask.status !== updatedTask.status) {
+            changes.push({
+                taskId,
+                userId: updatedTask.userId,
+                field: "status",
+                oldValue: currentTask.status,
+                newValue: updatedTask.status,
+            });
+        }
+
+        // Enregistrer chaque modification individuellement
+        for (const change of changes) {
+            await prisma.history.create({
+                data: change,
+            });
+        }
+
         res.redirect('/'); // Rediriger vers la page d'accueil après la mise à jour
     } catch (error) {
         console.error("Erreur lors de la mise à jour de la tâche:", error);
         res.status(500).send("Erreur lors de la mise à jour de la tâche.");
     }
 });
+
+
+
 
 
 // Afficher les détails d'une tâche
@@ -127,8 +193,13 @@ router.get('/task/:id', async (req, res) => {
             where: { id: taskId },
             include: { user: true }, // Inclure les informations de l'utilisateur assigné
         });
+        const history = await prisma.history.findMany({
+            where: { taskId },
+            include: { user: true }, // Inclure les informations de l'utilisateur qui a modifié la tâche
+            orderBy: { changedAt: 'desc' }, // Trier par date de modification (du plus récent au plus ancien)
+        });
         if (task) {
-            res.render('task-details', { task }); // Afficher la page de détails
+            res.render('task-details', { task, history }); // Afficher la page de détails avec l'historique
         } else {
             res.status(404).send("Tâche non trouvée.");
         }
@@ -138,6 +209,7 @@ router.get('/task/:id', async (req, res) => {
     }
 });
 
+
 //page de creation de compte
 router.get('/addtask', async (request, response) => {
     const users = await prisma.user.findMany();
@@ -146,7 +218,7 @@ router.get('/addtask', async (request, response) => {
         styles: ["add-task.css"],
         scripts: ["add-task.js"],
         users
-      });
+    });
 });
 
 //page de creation de compte
@@ -155,7 +227,7 @@ router.get('/adduser', async (request, response) => {
         titre: "add a user",
         styles: ["add-user.css"],
         scripts: ["add-user.js"],
-      });
+    });
 });
 
 

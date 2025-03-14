@@ -1,10 +1,13 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
 
 model Task {
@@ -13,16 +16,42 @@ model Task {
     description String
     priority    String   @default("Moyenne")
     dueDate     DateTime
-    status      String   @default("À faire") // Statut de la tâche
+    status      String   @default("À faire")
     createdAt   DateTime @default(now())
     updatedAt   DateTime @updatedAt
-    userId      Int      // Clé étrangère pour l'utilisateur assigné
+    userId      Int
     user        User     @relation(fields: [userId], references: [id])
+    histories   History[]
+    comments    Comment[]
 }
 
 model User {
+    id       Int       @id @default(autoincrement())
+    name     String
+    email    String    @unique
+    tasks    Task[]
+    histories History[] // Add this line to establish the relation
+    comments Comment[]
+}
+
+model History {
     id          Int      @id @default(autoincrement())
-    name        String
-    email       String   @unique
-    tasks       Task[]
+    taskId      Int
+    userId      Int
+    field       String
+    oldValue    String
+    newValue    String
+    changedAt   DateTime @default(now())
+    task        Task     @relation(fields: [taskId], references: [id])
+    user        User     @relation(fields: [userId], references: [id])
+}
+
+model Comment {
+    id          Int      @id @default(autoincrement())
+    content     String
+    createdAt   DateTime @default(now())
+    taskId      Int
+    userId      Int
+    task        Task     @relation(fields: [taskId], references: [id])
+    user        User     @relation(fields: [userId], references: [id])
 }
