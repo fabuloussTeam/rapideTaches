@@ -67,15 +67,30 @@ router.post('/update-status/:id', async (req, res) => {
     res.json({ status: updatedTask.status });
 });
 
+
+
 // Supprimer une tâche
 router.post('/delete/:id', async (req, res) => {
-    const { id } = req.params;
-    await prisma.task.delete({
-        where: { id: parseInt(id) },
-    });
-    res.redirect('/');
-});
+    const taskId = parseInt(req.params.id);
 
+    try {
+        // Supprimer les enregistrements liés dans la table History
+        await prisma.history.deleteMany({
+            where: { taskId },
+        });
+
+    
+        // Supprimer la tâche
+        await prisma.task.delete({
+            where: { id: taskId },
+        });
+
+        res.redirect('/'); // Rediriger vers la page d'accueil après la suppression
+    } catch (error) {
+        console.error("Erreur lors de la suppression de la tâche:", error);
+        res.status(500).send("Erreur lors de la suppression de la tâche.");
+    }
+});
 
 
 // Afficher le formulaire de modification d'une tâche
