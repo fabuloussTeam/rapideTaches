@@ -9,3 +9,38 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
+
+model Task {
+    id          Int      @id @default(autoincrement())
+    title       String
+    description String
+    priority    String   @default("Moyenne")
+    dueDate     DateTime
+    status      String   @default("À faire")
+    createdAt   DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    userId      Int
+    user        User     @relation(fields: [userId], references: [id])
+    histories   History[]
+}
+
+model User {
+    id       Int       @id @default(autoincrement())
+    name     String
+    email    String    @unique
+    tasks    Task[]
+    histories History[] // Add this line to establish the relation
+}
+
+model History {
+    id          Int      @id @default(autoincrement())
+    taskId      Int
+    userId      Int
+    field       String
+    oldValue    String
+    newValue    String
+    changedAt   DateTime @default(now())
+    task        Task     @relation(fields: [taskId], references: [id])
+    user        User     @relation(fields: [userId], references: [id])
+}
+

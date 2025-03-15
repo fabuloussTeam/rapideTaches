@@ -1,25 +1,21 @@
-<html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Tâches</title>
+    {{#each styles}}
+        <link rel="stylesheet" href="{{this}}">
+    {{/each}}
 
-        {{#each styles}}
-            <link rel="stylesheet" href={{this}} />
-        {{/each}}
-
-        {{#each scripts}}
-            <script src={{this}} type="module"></script>
-        {{/each}}
-
-        <title>{{titre}}</title>
-    </head>
-    <body>
-        {{> header}}
-        <a href="/">Accueil</a>
-        <a href="/documents">Documents</a>
-        <main>
-            {{{body}}}
-        </main>
-        <footer>&copy; Sedric Ouambo</footer>
-    </body>
+    <!-- JS spécifique -->
+    {{#each scripts}}
+        <script type="module" src="{{this}}"></script>
+    {{/each}}
+</head>
+<body>
+    {{> header}}
+    {{{body}}}
+    {{> footer}}
+</body>
 </html>

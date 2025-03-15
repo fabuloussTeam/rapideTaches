@@ -1,0 +1,113 @@
+
+    <main>
+        <h2>Liste des Tâches</h2>
+        <div class="task-columns"> 
+            <!-- Colonne "À faire" -->
+            <div class="column" id="column-todo">
+                <h3>À faire</h3>
+                <ul>
+                    {{#each tasks}}
+                        {{#if (eq this.status "À faire")}}
+                            <li data-task-id="{{this.id}}">
+                                <strong>{{this.title}}</strong> - {{this.description}} (Priorité: {{this.priority}})
+                                <br>
+                                Assignée à: {{this.user.name}} | Date limite: {{formatDate this.dueDate}}
+                                <form action="/delete/{{this.id}}" method="POST" style="display:inline;">
+                                    <button type="submit">Supprimer</button>
+                                </form>
+                                <a href="/edit/{{this.id}}">Modifier</a>
+                                 <a href="/task/{{this.id}}">Détails</a>
+                                <select class="status-select" data-task-id="{{this.id}}">
+                                    <option value="À faire" {{#if (eq this.status "À faire")}}selected{{/if}}>À faire</option>
+                                    <option value="En cours" {{#if (eq this.status "En cours")}}selected{{/if}}>En cours</option>
+                                    <option value="En révision" {{#if (eq this.status "En révision")}}selected{{/if}}>En révision</option>
+                                    <option value="Terminée" {{#if (eq this.status "Terminée")}}selected{{/if}}>Terminée</option>
+                                </select>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+
+            <!-- Colonne "En cours" -->
+            <div class="column" id="column-in-progress">
+                <h3>En cours</h3>
+                <ul>
+                    {{#each tasks}}
+                        {{#if (eq this.status "En cours")}}
+                            <li data-task-id="{{this.id}}">
+                                <strong>{{this.title}}</strong> - {{this.description}} (Priorité: {{this.priority}})
+                                <br>
+                                Assignée à: {{this.user.name}} | Date limite: {{formatDate this.dueDate}}
+                                <form action="/delete/{{this.id}}" method="POST" style="display:inline;">
+                                    <button type="submit">Supprimer</button>
+                                </form>
+                                <a href="/edit/{{this.id}}">Modifier</a>
+                                 <a href="/task/{{this.id}}">Détails</a> <!-- Lien vers les detqils de la tâche -->
+                                <select class="status-select" data-task-id="{{this.id}}">
+                                    <option value="À faire" {{#if (eq this.status "À faire")}}selected{{/if}}>À faire</option>
+                                    <option value="En cours" {{#if (eq this.status "En cours")}}selected{{/if}}>En cours</option>
+                                    <option value="En révision" {{#if (eq this.status "En révision")}}selected{{/if}}>En révision</option>
+                                    <option value="Terminée" {{#if (eq this.status "Terminée")}}selected{{/if}}>Terminée</option>
+                                </select>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+
+            <!-- Colonne "En révision" -->
+            <div class="column" id="column-in-review">
+                <h3>En révision</h3>
+                <ul>
+                    {{#each tasks}}
+                        {{#if (eq this.status "En révision")}}
+                            <li data-task-id="{{this.id}}">
+                                <strong>{{this.title}}</strong> - {{this.description}} (Priorité: {{this.priority}})
+                                <br>
+                                Assignée à: {{this.user.name}} | Date limite: {{formatDate this.dueDate}}
+                                <form action="/delete/{{this.id}}" method="POST" style="display:inline;">
+                                    <button type="submit">Supprimer</button>
+                                </form>
+                                <a href="/edit/{{this.id}}">Modifier</a>
+                                 <a href="/task/{{this.id}}">Détails</a> <!-- Lien des details de la tâche -->
+                                <select class="status-select" data-task-id="{{this.id}}">
+                                    <option value="À faire" {{#if (eq this.status "À faire")}}selected{{/if}}>À faire</option>
+                                    <option value="En cours" {{#if (eq this.status "En cours")}}selected{{/if}}>En cours</option>
+                                    <option value="En révision" {{#if (eq this.status "En révision")}}selected{{/if}}>En révision</option>
+                                    <option value="Terminée" {{#if (eq this.status "Terminée")}}selected{{/if}}>Terminée</option>
+                                </select>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+
+            <!-- Colonne "Terminée" -->
+            <div class="column" id="column-done">
+                <h3>Terminée</h3>
+                <ul>
+                    {{#each tasks}}
+                        {{#if (eq this.status "Terminée")}}
+                            <li data-task-id="{{this.id}}">
+                                <strong>{{this.title}}</strong> - {{this.description}} (Priorité: {{this.priority}})
+                                <br>
+                                Assignée à: {{this.user.name}} | Date limite: {{formatDate this.dueDate}}
+                                <form action="/delete/{{this.id}}" method="POST" style="display:inline;">
+                                    <button type="submit">Supprimer</button>
+                                </form>
+                                <a href="/edit/{{this.id}}">Modifier</a>
+                                <a href="/task/{{this.id}}">Détails</a>
+                                <select class="status-select" data-task-id="{{this.id}}">
+                                    <option value="À faire" {{#if (eq this.status "À faire")}}selected{{/if}}>À faire</option>
+                                    <option value="En cours" {{#if (eq this.status "En cours")}}selected{{/if}}>En cours</option>
+                                    <option value="En révision" {{#if (eq this.status "En révision")}}selected{{/if}}>En révision</option>
+                                    <option value="Terminée" {{#if (eq this.status "Terminée")}}selected{{/if}}>Terminée</option>
+                                </select>
+                            </li>
+                        {{/if}}
+                    {{/each}}
+                </ul>
+            </div>
+        </div>
+    </main>

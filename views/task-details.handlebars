@@ -1,0 +1,37 @@
+
+    <main>
+        <h2>{{task.title}}</h2>
+        <p><strong>Description:</strong> {{task.description}}</p>
+        <p><strong>Priorité:</strong> {{task.priority}}</p>
+        <p><strong>Date limite:</strong> {{formatDate task.dueDate}}</p>
+        <p><strong>Statut:</strong> {{task.status}}</p>
+        <p><strong>Assignée à:</strong> {{task.user.name}}</p>
+        <p><strong>Créée le:</strong> {{formatDate task.createdAt}}</p>
+        <p><strong>Dernière mise à jour:</strong> {{formatDate task.updatedAt}}</p>
+
+        <a href="/edit/{{task.id}}">Modifier cette tâche</a>
+
+        <h3>Historique des modifications</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Utilisateur</th>
+                    <th>Champ modifié</th>
+                    <th>Ancienne valeur</th>
+                    <th>Nouvelle valeur</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each history}}
+                    <tr>
+                        <td>{{formatDate this.changedAt}}</td>
+                        <td>{{this.user.name}}</td>
+                        <td>{{this.field}}</td>
+                        <td>{{this.oldValue}}</td>
+                        <td>{{this.newValue}}</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    </main>

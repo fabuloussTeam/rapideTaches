@@ -1,0 +1,63 @@
+.task-columns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.column {
+    width: 23%;
+    border: 1px solid #ddd;
+    padding: 1rem;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.column h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.column ul {
+    list-style-type: none;
+    padding: 0;
+    min-height: 200px; /* Pour que les colonnes aient une hauteur minimale */
+}
+
+.column li {
+    background-color: #fff;
+    margin: 0.5rem 0;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: grab;
+}
+
+.column li:hover {
+    background-color: #f1f1f1;
+}
+
+/**  ======================================Historique============================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f4f4f4;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
