@@ -22,7 +22,6 @@ model Task {
     userId      Int
     user        User     @relation(fields: [userId], references: [id])
     histories   History[]
-    comments    Comment[]
 }
 
 model User {
@@ -31,7 +30,6 @@ model User {
     email    String    @unique
     tasks    Task[]
     histories History[] // Add this line to establish the relation
-    comments Comment[]
 }
 
 model History {
@@ -46,12 +44,3 @@ model History {
     user        User     @relation(fields: [userId], references: [id])
 }
 
-model Comment {
-    id          Int      @id @default(autoincrement())
-    content     String
-    createdAt   DateTime @default(now())
-    taskId      Int
-    userId      Int
-    task        Task     @relation(fields: [taskId], references: [id])
-    user        User     @relation(fields: [userId], references: [id])
-}
