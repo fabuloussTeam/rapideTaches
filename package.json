@@ -1,14 +1,14 @@
 {
- "name": "todo",
+ "name": "rapideTaches",
  "version": "1.0.0",
- "description": "Projet Evaluation UA1",
+ "description": "Il s'agit ici d'une appliaction de gestion de tâches fais effectuer dans le cadre accademique",
  "main": "server.js",
  "type": "module",
  "scripts": {
   "dev": "nodemon server.js",
   "test": "echo \"Error: no test specified\" && exit 1"
  },
- "author": "Sedric Ouambo",
+ "author": "Emmanuel TJOM , Hyomba, Fruitella, Arnuad Dadji",
  "license": "UNLICENSED",
  "dependencies": {
   "@prisma/client": "^6.3.1",

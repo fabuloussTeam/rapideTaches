@@ -9,16 +9,3 @@ datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
-
-model todo {
-  id            Int     @id @default(autoincrement())
-  description   String
-  est_faite     Boolean @default(false)
-  auteur        String?
-}
-
-model user{
-  id            Int     @id @default(autoincrement())
-  email         String
-}
-
