@@ -24,7 +24,6 @@ router.post('/user/add', async (req, res) => {
     if (!name || !email) {
         return res.status(400).send("Le nom et l'email sont obligatoires.");
     }
-
     try {
         await prisma.user.create({
             data: {
