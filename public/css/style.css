@@ -1,63 +1,269 @@
+body,
+h1,
+h2,
+h3,
+p,
+ul,
+li,
+form,
+input,
+textarea,
+button {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  background-color: #f9f9f9;
+  color: #333;
+}
+
+header {
+  background-color: #333;
+  color: white;
+  padding: 1rem;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2rem;
+}
+
+nav a {
+  color: white;
+  margin: 0 1rem;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+nav a:hover {
+  text-decoration: underline;
+}
+
+main {
+  padding: 2rem;
+}
+
 .task-columns {
-    display: flex;
-    justify-content: space-between;
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2rem;
 }
 
 .column {
-    width: 23%;
-    border: 1px solid #ddd;
-    padding: 1rem;
-    border-radius: 5px;
-    background-color: #f9f9f9;
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  width: 23%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.column:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .column h3 {
-    text-align: center;
-    margin-bottom: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  color: #333;
+  text-align: center;
 }
 
 .column ul {
-    list-style-type: none;
-    padding: 0;
-    min-height: 200px; /* Pour que les colonnes aient une hauteur minimale */
+  list-style-type: none;
+  padding: 0;
+  min-height: 200px; 
 }
 
 .column li {
-    background-color: #fff;
-    margin: 0.5rem 0;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    cursor: grab;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column; 
+  gap: 0.5rem; 
 }
 
 .column li:hover {
-    background-color: #f1f1f1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/**  ======================================Historique============================= */
+.column li a,
+.column li form,
+.column li select {
+  width: 100%; 
+  text-align: center; 
+}
+
+.column li button {
+  width: 100%; 
+  padding: 0.5rem;
+  background-color: #333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.column li button:hover {
+  background-color: #555;
+}
+
+.column li select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: white;
+  cursor: pointer;
+}
+
+.todo-column {
+  background-color: #ffe6e6; 
+  border-color: #ff9999; 
+}
+
+.todo-column h3 {
+  color: #cc0000; 
+}
+
+.in-progress-column {
+  background-color: #fff3e6; 
+  border-color: #ffcc99; 
+}
+
+.in-progress-column h3 {
+  color: #ff6600; 
+}
+
+.review-column {
+  background-color: #e6f2ff; 
+  border-color: #99c2ff; 
+}
+
+.review-column h3 {
+  color: #0066cc; 
+}
+
+.done-column {
+  background-color: #e6ffe6; 
+  border-color: #99cc99; 
+}
+
+.done-column h3 {
+  color: #009900; 
+}
+
+.task-details {
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 2rem;
+  max-width: 600px;
+  margin: 2rem auto;
+}
+
+.task-details h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+.task-details p {
+  margin: 1rem 0;
+  font-size: 1rem;
+}
+
+.task-details strong {
+  color: #333;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+form label {
+  font-weight: bold;
+  color: #333;
+}
+
+form input,
+form textarea,
+form select {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+form button {
+  background-color: #333;
+  color: white;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #555;
+}
 
 table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
 }
 
-th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: left;
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
 }
 
 th {
-    background-color: #f4f4f4;
+  background-color: #f4f4f4;
 }
 
 tr:nth-child(even) {
-    background-color: #f9f9f9;
+  background-color: #f9f9f9;
 }
 
 tr:hover {
-    background-color: #f1f1f1;
+  background-color: #f1f1f1;
+}
+
+footer {
+  text-align: center;
+  padding: 1rem;
+  background-color: #333;
+  color: white;
+  margin-top: 2rem;
+}
+
+footer p {
+  margin: 0;
+  font-size: 0.9rem;
 }
 
