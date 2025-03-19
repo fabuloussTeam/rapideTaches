@@ -3,7 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestion des Tâches</title>
+    <title>{{titre}}</title> <!-- Utilisation de la variable titre dynamique -->
+
+    <!-- CSS générique utilisé par toutes les pages -->
+    <link rel="stylesheet" href="/css/style.css">
+
+    <!-- CSS spécifique -->
     {{#each styles}}
         <link rel="stylesheet" href="{{this}}">
     {{/each}}
@@ -14,8 +19,12 @@
     {{/each}}
 </head>
 <body>
-    {{> header}}
-    {{{body}}}
-    {{> footer}}
+    {{> header }}
+
+    <main>
+        {{{body}}} <!-- Le contenu des pages sera injecté ici -->
+    </main>
+
+    {{> footer }}
 </body>
 </html>
