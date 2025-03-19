@@ -1,23 +1,28 @@
-<!-- Formulaire pour ajouter une tâche -->
+{{! Utilisation du layout principal }}
 <h2>Ajouter une Tâche</h2>
 <form action="/add" method="POST">
-    <label for="title">Titre:</label>
-    <input type="text" id="title" name="title" required>
-    <label for="description">Description:</label>
-    <textarea id="description" name="description" required></textarea>
-    <label for="priority">Priorité:</label>
-    <select id="priority" name="priority">
-        <option value="Faible">Faible</option>
-        <option value="Moyenne">Moyenne</option>
-        <option value="Élevée">Élevée</option>
-    </select>
-    <label for="dueDate">Date limite:</label>
-    <input type="datetime-local" id="dueDate" name="dueDate" required>
-    <label for="userId">Assigner à:</label>
-    <select id="userId" name="userId" required>
-        {{#each users}}
-         <option value="{{this.id}}">{{this.name}}</option>
-        {{/each}}
-    </select>
-    <button type="submit">Ajouter</button>
+  <label for="title">Titre :</label>
+  <input type="text" id="title" name="title" required />
+
+  <label for="description">Description :</label>
+  <textarea id="description" name="description" required></textarea>
+
+  <label for="priority">Priorité :</label>
+  <select id="priority" name="priority" required>
+    <option value="Faible">Faible</option>
+    <option value="Moyenne">Moyenne</option>
+    <option value="Élevée">Élevée</option>
+  </select>
+
+  <label for="dueDate">Date limite :</label>
+  <input type="datetime-local" id="dueDate" name="dueDate" required />
+
+  <label for="userId">Assigner à :</label>
+  <select id="userId" name="userId" required>
+    {{#each users}}
+      <option value="{{this.id}}">{{this.name}}</option>
+    {{/each}}
+  </select>
+
+  <button type="submit">Ajouter</button>
 </form>
