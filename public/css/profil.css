@@ -1,0 +1,95 @@
+/* Style général de la page */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Style du titre de bienvenue */
+h2 {
+  color: #2c3e50;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+/* Style de la liste des tâches */
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+/* Style de chaque élément de la liste */
+li {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  padding: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Style des divs à l'intérieur de chaque élément de la liste */
+li div {
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+/* Style des labels pour les informations de la tâche */
+li div:before {
+  content: attr(data-label);
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+/* Style du lien "Modifier" */
+a {
+  color: #3498db;
+  text-decoration: none;
+  margin-right: 10px;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Style du bouton de suppression */
+input[type="button"] {
+  background-color: #e74c3c;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+input[type="button"]:hover {
+  background-color: #c0392b;
+}
+
+/* Style pour les informations spécifiques */
+li div:nth-child(1):before {
+  content: "Titre: ";
+}
+li div:nth-child(2):before {
+  content: "Description: ";
+}
+li div:nth-child(3):before {
+  content: "Priorité: ";
+}
+li div:nth-child(4):before {
+  content: "Statut: ";
+}
+li div:nth-child(5):before {
+  content: "Assignée à: ";
+}
+li div:nth-child(6):before {
+  content: "Date limite: ";
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}

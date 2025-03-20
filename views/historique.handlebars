@@ -1,0 +1,36 @@
+<h1>Historique des Tâches</h1>
+
+{{#if taskHistory.length}}
+    <table border="1">
+        <thead>
+            <tr>
+               
+                <th>Tâche</th>
+                <th>Modifié par</th>
+                 <th>DescriptionD</th>
+                <th>Description</th>
+                <th>Statut</th>
+                 <th>Priorité</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each taskHistory}}
+            <tr>
+                
+                <td>{{this.task.title}}</td>  
+                <td>{{this.modifiedBy.username}}</td>
+                <td>{{this.task.description}}</td>
+                <td>{{this.changeDescription}}</td>
+                <td>{{this.task.status.name}}</td>
+                 <td>{{this.task.priority.name}}</td>
+                <td>{{this.modifiedAt }}</td>  
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+{{else}}
+    <p>Aucun historique disponible.</p>
+{{/if}}
+
+<a href="/">Retour à l'accueil</a>

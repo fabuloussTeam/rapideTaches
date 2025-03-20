@@ -1,0 +1,10 @@
+<div class="task-container">
+   <div class="task-details">
+     <div><strong>Titre:</strong> {{task.title}}</div>
+     <div><strong>Description: </strong>{{task.description}}</div>
+     <div><strong>Priorité: </strong>{{task.priority.name}}</div>
+     <div><strong>Statut :</strong>{{task.status.name}}</div>
+     <div><strong>Assignée à:</strong> {{task.assignedTo.username}}</div>
+     <div><strong>Date limite:</strong> {{formatDate task.dueDate}}</div>
+    </div>
+ </div>

@@ -1,251 +1,291 @@
-import express from 'express';
-const router = express.Router();
-import { PrismaClient } from '@prisma/client';
-const prisma = new PrismaClient();
+import { Router } from "express";
+import {addTask,getTasks,updateTask,deleteTask,getTaskById,getTaskByUser, getTaskHistory,} from "./model/Tasks.js";
+import { isIdValid, validateTitre, validateDescription } from "./validation.js";
+import { getuserById } from "./model/Profil.js";
 
-// Page d'accueil
-router.get('/', async (req, res) => {
-    const tasks = await prisma.task.findMany({
-        include: { user: true }, // Inclure les informations de l'utilisateur
+const router = Router();
+
+//Definition des routes
+/*  ............. */
+
+
+router.get("/", async (request, response) => {
+  try {
+    const tasks = await getTasks(); // Récupérer les tâches
+    //console.log("Tasks récupérées:", tasks);
+    const columns = {
+      aFaire: [],
+      enCours: [],
+      enRevision: [],
+      terminee: [],
+    };
+    const statusMapping = {
+      "à faire": "aFaire",
+      "en cours": "enCours",
+      "en révision": "enRevision",
+      "terminé": "terminee",
+    };
+    tasks.forEach((task) => {
+      const statusName = task.status.name?.toLowerCase().trim();
+      const columnKey = statusMapping[statusName];
+      if (columnKey) {
+        columns[columnKey].push(task);
+      } else {
+        console.warn(`Statut non reconnu : ${task.status.name}`);
+      }
     });
-    const users = await prisma.user.findMany(); // Récupérer tous les utilisateurs
-    res.render('index', { 
-        titre: "Gestion de taches",
-        styles: ["/css/style.css"],
-        scripts: ["/js/main.js", "/js/ajouter-tache.js"],
-        tasks,
-        users,
+    //console.log("Colonnes organisées:", columns);
+    response.render("home", {
+      columns: columns,
+      titre: "Accueil des tâches | Gestion des tâches",
+      styles: ["/css/home.css"],
     });
+  } catch (err) {
+    console.error("Erreur lors du chargement des tâches :", err);
+    response.status(500).send("Erreur serveur");
+  }
 });
 
-// Créer un utilisateur
-router.post('/user/add', async (req, res) => {
-    const { name, email } = req.body;
-    if (!name || !email) {
-        return res.status(400).send("Le nom et l'email sont obligatoires.");
-    }
-    try {
-        await prisma.user.create({
-            data: {
-                name,
-                email,
-            },
-        });
-        res.redirect('/');
-    } catch (error) {
-        console.error("Erreur lors de la création de l'utilisateur:", error);
-        res.status(500).send("Erreur lors de la création de l'utilisateur.");
-    }
-});
 
-// Ajouter une tâche
-router.post('/add', async (req, res) => {
-    const { title, description, priority, dueDate, userId } = req.body;
-    await prisma.task.create({
-        data: {
-            title,
-            description,
-            priority,
-            dueDate: new Date(dueDate),
-            userId: parseInt(userId),
-            status: "À faire", // Statut par défaut
-        },
+
+
+// Route pour afficher les détails d'une tâche
+
+router.get("/details/:id", async (request, response) => {
+  try {
+    const taskId = parseInt(request.params.id);
+    // Validation de l'ID
+    if (!isIdValid(taskId)) {
+      console.error("ID invalide :", taskId);
+      return response.status(400).json({ error: "ID invalide" });
+    }
+    // Récupérer la tâche par son ID
+    const task = await getTaskById(taskId);
+    if (!task) {
+      return response.status(404).json({ error: "Tâche non trouvée" });
+    }
+    // Afficher la vue avec les détails de la tâche
+    response.render("details", {
+      titre: "Détail d'un tâche | Gestion des tâches",
+      styles: ["/css/detail.css"],
+      task: task,
     });
-    res.redirect('/');
+  } catch (error) {
+    console.error("Erreur :", error);
+    response.status(500).json({ error: "Une erreur s'est produite" });
+  }
 });
 
-// Mettre à jour le statut d'une tâche
-router.post('/update-status/:id', async (req, res) => {
-    const { id } = req.params;
-    const { status } = req.body;
-    const updatedTask = await prisma.task.update({
-        where: { id: parseInt(id) },
-        data: { status },
+// Route pour afficher le profil d'un utilisateur
+
+router.get("/Profil", async (request, response) => {
+  try {
+    // Appel de la fonction pour récupérer l'utilisateur
+    const user = await getuserById(1);
+    // Vérifier si l'utilisateur existe
+    if (!user) {
+      return response.status(404).send("Utilisateur non trouvé");
+    }
+    // Rendre la vue "Profil" avec les données de l'utilisateur et ses tâches
+    response.render("Profil", {
+      titre: "Profil | Gestion des tâches",
+      styles: ["/css/profil.css"],
+      scripts: ["/js/Profil.js"],
+      nom: user.username,
+      tasks: await getTaskByUser(1),
     });
-    console.log("Statut mis à jour:", updatedTask.status); // Log pour vérifier le statut
-    res.json({ status: updatedTask.status });
+  } catch (error) {
+    console.error(
+      "Erreur lors de la récupération du profil ou des tâches :",
+      error
+    );
+    response.status(500).send("Erreur interne du serveur");
+  }
 });
 
+router.get("/task", async (request, response) => {
+  response.render("create-task", {
+    titre: "Créer une tâche | Gestion des tâches",
+    styles: ["/css/create.css"],
+    scripts: ["/js/create-task.js"],
+  });
+});
 
+router.get("/edit/:id", async (request, response) => {
+  try {
+    const id = parseInt(request.params.id);
 
-// Supprimer une tâche
-router.post('/delete/:id', async (req, res) => {
-    const taskId = parseInt(req.params.id);
-
-    try {
-        // Supprimer les enregistrements liés dans la table History
-        await prisma.history.deleteMany({
-            where: { taskId },
-        });
-
-    
-        // Supprimer la tâche
-        await prisma.task.delete({
-            where: { id: taskId },
-        });
-
-        res.redirect('/'); // Rediriger vers la page d'accueil après la suppression
-    } catch (error) {
-        console.error("Erreur lors de la suppression de la tâche:", error);
-        res.status(500).send("Erreur lors de la suppression de la tâche.");
+    // Validation de l'ID
+    if (!isIdValid(id)) {
+      console.error("ID invalide :", id);
+      return response.status(400).json({ error: "ID invalide" });
     }
-});
-
-
-// Afficher le formulaire de modification d'une tâche
-router.get('/edit/:id', async (req, res) => {
-    const taskId = parseInt(req.params.id);
-    try {
-        const task = await prisma.task.findUnique({
-            where: { id: taskId },
-            include: { user: true }, // Inclure les informations de l'utilisateur assigné
-        });
-        const users = await prisma.user.findMany(); // Récupérer tous les utilisateurs pour le formulaire
-        res.render('edit', { task, users });
-    } catch (error) {
-        console.error("Erreur lors de la récupération de la tâche:", error);
-        res.status(500).send("Erreur lors de la récupération de la tâche.");
+    // Récupérer la tâche par son ID
+    const task = await getTaskById(id);
+    if (!task) {
+      return response.status(404).json({ error: "Tâche non trouvée" });
     }
-});
-
-
-// Mettre à jour une tâche
-router.post('/update/:id', async (req, res) => {
-    const taskId = parseInt(req.params.id);
-    const { title, description, priority, dueDate, userId, status } = req.body;
-
-    try {
-        // Récupérer la tâche actuelle pour comparer les valeurs
-        const currentTask = await prisma.task.findUnique({
-            where: { id: taskId },
-        });
-
-        // Mettre à jour la tâche
-        const updatedTask = await prisma.task.update({
-            where: { id: taskId },
-            data: {
-                title,
-                description,
-                priority,
-                dueDate: new Date(dueDate),
-                userId: parseInt(userId),
-                status,
-            },
-        });
-
-        // Enregistrer les modifications dans l'historique
-        const changes = [];
-        if (currentTask.title !== updatedTask.title) {
-            changes.push({
-                taskId,
-                userId: updatedTask.userId,
-                field: "title",
-                oldValue: currentTask.title,
-                newValue: updatedTask.title,
-            });
-        }
-        if (currentTask.description !== updatedTask.description) {
-            changes.push({
-                taskId,
-                userId: updatedTask.userId,
-                field: "description",
-                oldValue: currentTask.description,
-                newValue: updatedTask.description,
-            });
-        }
-        if (currentTask.priority !== updatedTask.priority) {
-            changes.push({
-                taskId,
-                userId: updatedTask.userId,
-                field: "priority",
-                oldValue: currentTask.priority,
-                newValue: updatedTask.priority,
-            });
-        }
-        if (currentTask.dueDate.toISOString() !== updatedTask.dueDate.toISOString()) {
-            changes.push({
-                taskId,
-                userId: updatedTask.userId,
-                field: "dueDate",
-                oldValue: currentTask.dueDate.toISOString(),
-                newValue: updatedTask.dueDate.toISOString(),
-            });
-        }
-        if (currentTask.status !== updatedTask.status) {
-            changes.push({
-                taskId,
-                userId: updatedTask.userId,
-                field: "status",
-                oldValue: currentTask.status,
-                newValue: updatedTask.status,
-            });
-        }
-
-        // Enregistrer chaque modification individuellement
-        for (const change of changes) {
-            await prisma.history.create({
-                data: change,
-            });
-        }
-
-        res.redirect('/'); // Rediriger vers la page d'accueil après la mise à jour
-    } catch (error) {
-        console.error("Erreur lors de la mise à jour de la tâche:", error);
-        res.status(500).send("Erreur lors de la mise à jour de la tâche.");
-    }
-});
-
-
-
-
-
-// Afficher les détails d'une tâche
-router.get('/task/:id', async (req, res) => {
-    const taskId = parseInt(req.params.id);
-    try {
-        const task = await prisma.task.findUnique({
-            where: { id: taskId },
-            include: { user: true }, // Inclure les informations de l'utilisateur assigné
-        });
-        const history = await prisma.history.findMany({
-            where: { taskId },
-            include: { user: true }, // Inclure les informations de l'utilisateur qui a modifié la tâche
-            orderBy: { changedAt: 'desc' }, // Trier par date de modification (du plus récent au plus ancien)
-        });
-        if (task) {
-            res.render('task-details', { task, history }); // Afficher la page de détails avec l'historique
-        } else {
-            res.status(404).send("Tâche non trouvée.");
-        }
-    } catch (error) {
-        console.error("Erreur lors de la récupération de la tâche:", error);
-        res.status(500).send("Erreur lors de la récupération de la tâche.");
-    }
-});
-
-
-//page de creation de compte
-router.get('/addtask', async (request, response) => {
-    const users = await prisma.user.findMany();
-    response.render("add-task", {
-        titre: "add a task ",
-        styles: ["add-task.css"],
-        scripts: ["add-task.js"],
-        users
+    // Récupérer l'utilisateur authentifié (si disponible)
+    const user = request.user;
+    // Afficher la vue de modification avec les infos de la tâche
+    response.render("edit", {
+      titre: "Modifier une tâche | Gestion des tâches",
+      scripts: ["/js/edit.js"],
+      styles: ["/css/edit.css"],
+      task: task,
+      user: user,
     });
+  } catch (error) {
+    console.error("Erreur :", error);
+    response.status(500).json({ error: "Une erreur s'est produite" });
+  }
 });
 
-//page de creation de compte
-router.get('/adduser', async (request, response) => {
-    response.render("add-user", {
-        titre: "add a user",
-        styles: ["add-user.css"],
-        scripts: ["add-user.js"],
+// Route pour afficher la page de l'historique des tâches
+
+router.get("/historique", async (request, response) => {
+  try {
+    // Récupérer l'historique des tâches
+    const taskHistory = await getTaskHistory();
+
+    response.render("historique", {
+      titre: "historique | Gestion des tâches",
+      styles: ["/css/historique.css"],
+      taskHistory: taskHistory,
     });
+  } catch (error) {
+    console.error("Erreur lors de la récupération de l’historique:", error);
+    response.status(500).send("Erreur serveur");
+  }
+});
+
+/*  ............. */
+
+/*  ............. */
+
+// Route pour obtenir la liste des tâches
+router.get("/api/tasks", async (request, response) => {
+  try {
+    const { assignedToId, statusId, priorityId } = request.query;
+
+    // Appeler la fonction getTasks avec les filtres optionnels
+    const tasks = await getTasks(
+      assignedToId ? parseInt(assignedToId) : undefined,
+      statusId ? parseInt(statusId) : undefined,
+      priorityId ? parseInt(priorityId) : undefined
+    );
+
+    return response.status(200).json(tasks);
+  } catch (error) {
+    return response.status(400).json({ error: error.message });
+  }
+});
+
+// Route pour ajouter une tâche
+router.post("/api/task", async (request, response) => {
+  try {
+    const { title, description, priorityId, statusId, assignedToId, dueDate } =
+      request.body;
+       // Validations
+    if (!validateTitre(title)) {
+      return response.status(400).json({ error: "Le titre invalide." });
+    }
+
+    if (!validateDescription(description)) {
+      return response.status(400).json({ error: "La description invalide." });
+    }
+    if (!priorityId || !statusId || !assignedToId ) {
+      return response
+        .status(400)
+        .json({ error: "Certains champs obligatoires sont manquants" });
+    }
+    // Appeler la fonction addTask
+    const newTask = await addTask(
+      title,
+      description,
+      priorityId,
+      statusId,
+      assignedToId,
+      new Date(dueDate)
+    );
+    return response
+      .status(201)
+      .json({ task: newTask, message: "Tâche ajoutée avec succès" });
+  } catch (error) {
+    return response.status(400).json({ error: error.message });
+  }
 });
 
 
 
+router.put("/api/task", async (request, response) => {
+  try {
+    const id = parseInt(request.query.id);
+    if (isNaN(id)) {
+      return response.status(400).json({ error: "ID invalide" });
+    }
 
+    const {
+      title,
+      description,
+      priorityId,
+      statusId,
+      assignedToId,
+      dueDate,
+      modifiedById,
+      changeDescription,
+    } = request.body;
+
+    // Validations
+    if (!validateTitre(title)) {
+      return response
+        .status(400)
+        .json({ error: "Le titre invalide." });
+    }
+
+    if (!validateDescription(description)) {
+      return response
+        .status(400)
+        .json({ error: "La description invalide." });
+    }
+
+    if (!priorityId || !statusId || !assignedToId || !dueDate || !modifiedById) {
+      return response
+        .status(400)
+        .json({ error: "Certains champs obligatoires sont manquants" });
+    }
+
+    // Mise à jour de la tâche
+    const updatedTask = await updateTask(
+      id,
+      {
+        title,
+        description,
+        priorityId,
+        statusId,
+        assignedToId,
+        dueDate: new Date(dueDate),
+      },
+      modifiedById,
+      changeDescription
+    );
+
+    return response.status(200).json({
+      task: updatedTask,
+      message: "Tâche mise à jour avec succès",
+    });
+  } catch (error) {
+    return response.status(400).json({ error: error.message });
+  }
+});
+
+router.delete("/api/task/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+  if (!isIdValid(id)) {
+      return res.status(400).json({ error: "ID invalide" });
+  }
+  const deletedTask = await deleteTask(id);
+  return res.status(200).json({ task: deletedTask, message: "Tâche supprimée avec succès" });
+});
 
 export default router;

@@ -1,0 +1,110 @@
+/* Style général de la page */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    padding: 2rem;
+    color: #2d3748;
+}
+
+/* Titre principal */
+h1 {
+    text-align: center;
+    font-size: 2rem;
+    color: #2d3748;
+    margin-bottom: 2rem;
+}
+
+/* Tableau */
+table {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* En-tête du tableau */
+thead {
+    background-color: #667eea;
+    color: white;
+}
+
+thead th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 500;
+}
+
+/* Corps du tableau */
+tbody tr {
+    border-bottom: 1px solid #e2e8f0;
+    transition: background-color 0.3s ease;
+}
+
+tbody tr:hover {
+    background-color: #f7fafc;
+}
+
+tbody td {
+    padding: 1rem;
+    color: #4a5568;
+}
+
+/* Lien de retour */
+a {
+    display: block;
+    text-align: center;
+    margin-top: 2rem;
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #5a67d8;
+    text-decoration: underline;
+}
+
+/* Message si l'historique est vide */
+p {
+    text-align: center;
+    color: #4a5568;
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    body {
+        padding: 1rem;
+    }
+
+    h1 {
+        font-size: 1.8rem;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.75rem;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.5rem;
+    }
+
+    table {
+        font-size: 0.8rem;
+    }
+
+    thead th, tbody td {
+        padding: 0.5rem;
+    }
+}
