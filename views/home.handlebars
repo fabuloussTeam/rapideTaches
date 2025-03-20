@@ -1,0 +1,67 @@
+<main>
+
+  <section class="column a-faire">
+    <h3>À faire</h3>
+    <ul>
+      {{#each columns.aFaire}}
+        <li>
+          <div>{{this.title}}</div>
+          <div>{{this.description}}</div>
+          <div>{{this.priority.name}}</div>
+          <div><a href="/details/{{this.id}}">Voir Tâche</a></div>
+        </li>
+      {{else}}
+        <li>Aucune tâche à faire.</li>
+      {{/each}}
+    </ul>
+  </section>
+
+  <section class="column en-cours">
+    <h3>En cours</h3>
+    <ul>
+      {{#each columns.enCours}}
+        <li>
+          <div>{{this.title}}</div>
+          <div>{{this.description}}</div>
+          <div>{{this.priority.name}}</div>
+          <div><a href="/details/{{this.id}}">Voir Tâche</a></div>
+        </li>
+      {{else}}
+        <li>Aucune tâche en cours.</li>
+      {{/each}}
+    </ul>
+  </section>
+
+  <section class="column en-revision">
+    <h3>En révision</h3>
+    <ul>
+      {{#each columns.enRevision}}
+        <li>
+          <div>{{this.title}}</div>
+          <div>{{this.description}}</div>
+          <div>{{this.priority.name}}</div>
+          <div><a href="/details/{{this.id}}">Voir Tâche</a></div>
+        </li>
+      {{else}}
+        <li>Aucune tâche en révision.</li>
+      {{/each}}
+    </ul>
+  </section>
+
+  <section class="column terminee">
+    <h3>Terminée</h3>
+    <ul>
+      {{#each columns.terminee}}
+        <li>
+          <div>{{this.title}}</div>
+          <div>{{this.description}}</div>
+          <div>{{this.priority.name}}</div>
+          <div><a href="/details/{{this.id}}">Voir Tâche</a></div>
+        </li>
+      {{else}}
+        <li>Aucune tâche terminée.</li>
+      {{/each}}
+    </ul>
+  </section>
+
+</main>

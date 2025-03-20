@@ -1,30 +1,32 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{titre}}</title> <!-- Utilisation de la variable titre dynamique -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{titre}}</title>
 
-    <!-- CSS générique utilisé par toutes les pages -->
-    <link rel="stylesheet" href="/css/style.css">
+   <!-- CSS générique utilisé par toutes les pages -->
+
+  <link rel="stylesheet" href="/css/style.css">
 
     <!-- CSS spécifique -->
+
     {{#each styles}}
         <link rel="stylesheet" href="{{this}}">
     {{/each}}
 
-    <!-- JS spécifique -->
-    {{#each scripts}}
+     {{#each scripts}}
         <script type="module" src="{{this}}"></script>
     {{/each}}
+    
 </head>
 <body>
-    {{> header }}
+  {{> header }}
 
-    <main>
-        {{{body}}} <!-- Le contenu des pages sera injecté ici -->
-    </main>
+  <main>
+    {{{body}}}
+  </main>
 
-    {{> footer }}
+  {{> footer }}
 </body>
 </html>
