@@ -1,37 +1,40 @@
-    <main>
-        <h2>Modifier la Tâche : {{task.title}}</h2>
-        <form action="/update/{{task.id}}" method="POST">
-            <label for="title">Titre:</label>
-            <input type="text" id="title" name="title" value="{{task.title}}" required>
+<h2>Modifier une Tâche</h2>
 
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" required>{{task.description}}</textarea>
+<form id="edit-task-form">
 
-            <label for="priority">Priorité:</label>
-            <select id="priority" name="priority">
-                <option value="Faible" {{#if (eq task.priority "Faible")}}selected{{/if}}>Faible</option>
-                <option value="Moyenne" {{#if (eq task.priority "Moyenne")}}selected{{/if}}>Moyenne</option>
-                <option value="Élevée" {{#if (eq task.priority "Élevée")}}selected{{/if}}>Élevée</option>
-            </select>
+    <input type="hidden" id="taskId" name="taskId" value="{{task.id}}">
 
-            <label for="dueDate">Date limite:</label>
-            <input type="datetime-local" id="dueDate" name="dueDate" value="{{formatDate task.dueDate}}" required>
+    <label for="title">Titre :</label>
+    <input type="text" id="title" name="title" value="{{task.title}}" required minlength="3" maxlength="100">
 
-            <label for="userId">Assigner à:</label>
-            <select id="userId" name="userId" required>
-                {{#each users}}
-                    <option value="{{this.id}}" {{#if (eq this.id task.userId)}}selected{{/if}}>{{this.name}}</option>
-                {{/each}}
-            </select>
+    <label for="description">Description :</label>
+    <textarea id="description" name="description" required>{{task.description}}</textarea>
 
-            <label for="status">Statut:</label>
-            <select id="status" name="status">
-                <option value="À faire" {{#if (eq task.status "À faire")}}selected{{/if}}>À faire</option>
-                <option value="En cours" {{#if (eq task.status "En cours")}}selected{{/if}}>En cours</option>
-                <option value="En révision" {{#if (eq task.status "En révision")}}selected{{/if}}>En révision</option>
-                <option value="Terminée" {{#if (eq task.status "Terminée")}}selected{{/if}}>Terminée</option>
-            </select>
+    <label for="priority">Priorité :</label>
+    <select id="priority" name="priority" required>
+        <option value="1" {{#if (eq task.priority.id 1)}}selected{{/if}}>Faible</option>
+        <option value="2" {{#if (eq task.priority.id 2)}}selected{{/if}}>Moyenne</option>
+        <option value="3" {{#if (eq task.priority.id 3)}}selected{{/if}}>Élevée</option>
+    </select>
 
-            <button type="submit">Mettre à jour</button>
-        </form>
-    </main>
+    <label for="status">Statut :</label>
+    <select id="status" name="status" required>
+        <option value="1" {{#if (eq task.status.id 1)}}selected{{/if}}>À faire</option>
+        <option value="2" {{#if (eq task.status.id 2)}}selected{{/if}}>En cours</option>
+        <option value="3" {{#if (eq task.status.id 3)}}selected{{/if}}>En révision</option>
+        <option value="4" {{#if (eq task.status.id 4)}}selected{{/if}}>Terminé</option>
+    </select>
+
+    <label for="dueDate">Date de mise à jour:</label>
+    <input type="date" id="dueDate" name="dueDate" required >
+
+    <label for="assignedTo">Assigné à :</label>
+    <select id="assignedTo" name="assignedTo" required>
+        <option value="1" {{#if (eq task.assignedTo.id 1)}}selected{{/if}}>nana</option>
+      
+    </select>
+
+
+    <button type="submit">Modifier la tâche</button>
+</form>
+
