@@ -51,7 +51,7 @@ export const deleteTask = async (taskId) => {
     return deletedTask;
 }
 
-// Mettre à jour une tâche
+// Mettre à jour une tâche: Ouvrir la page de mise à jour
 export const updateTask = async (taskId) => {
     const task = await prisma.task.findUnique({
         where: { id: taskId },
@@ -60,6 +60,84 @@ export const updateTask = async (taskId) => {
     const users = await prisma.user.findMany(); // 
     return { task, users };
 }
+
+
+// Mettre à jour une tâche: Enregistrer les modifications
+export const saveTask = async (taskId, title, description, priority, dueDate, userId, status) => {
+    const currentTask = await prisma.task.findUnique({
+        where: { id: taskId },
+    });
+
+    const updatedTask = await prisma.task.update({
+        where: { id: taskId },
+        data: {
+            title,
+            description,
+            priority,
+            dueDate: new Date(dueDate),
+            userId: parseInt(userId),
+            status,
+        },
+    });
+
+    // Enregistrer les modifications dans l'historique
+    const changes = [];
+    if (currentTask.title !== updatedTask.title) {
+        changes.push({
+            taskId,
+            userId: updatedTask.userId,
+            field: "title",
+            oldValue: currentTask.title,
+            newValue: updatedTask.title,
+        });
+    }
+    if (currentTask.description !== updatedTask.description) {
+        changes.push({
+            taskId,
+            userId: updatedTask.userId,
+            field: "description",
+            oldValue: currentTask.description,
+            newValue: updatedTask.description,
+        });
+    }
+    if (currentTask.priority !== updatedTask.priority) {
+        changes.push({
+            taskId,
+            userId: updatedTask.userId,
+            field: "priority",
+            oldValue: currentTask.priority,
+            newValue: updatedTask.priority,
+        });
+    }
+    if (currentTask.dueDate.toISOString() !== updatedTask.dueDate.toISOString()) {
+        changes.push({
+            taskId,
+            userId: updatedTask.userId,
+            field: "dueDate",
+            oldValue: currentTask.dueDate.toISOString(),
+            newValue: updatedTask.dueDate.toISOString(),
+        });
+    }
+    if (currentTask.status !== updatedTask.status) {
+        changes.push({
+            taskId,
+            userId: updatedTask.userId,
+            field: "status",
+            oldValue: currentTask.status,
+            newValue: updatedTask.status,
+        });
+    }
+
+    for (const change of changes) {
+        await prisma.history.create({
+            data: change,
+        });
+    }
+
+    return updatedTask;
+}
+
+
 
 // Afficher les détails d'une tâche
 export const getTaskDetails = async (taskId) => {
