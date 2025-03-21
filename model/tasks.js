@@ -50,3 +50,28 @@ export const deleteTask = async (taskId) => {
 
     return deletedTask;
 }
+
+// Mettre à jour une tâche
+export const updateTask = async (taskId) => {
+    const task = await prisma.task.findUnique({
+        where: { id: taskId },
+        include: { user: true }, // Inclure les informations de l'utilisateur assigné
+    });
+    const users = await prisma.user.findMany(); // 
+    return { task, users };
+}
+
+// Afficher les détails d'une tâche
+export const getTaskDetails = async (taskId) => {
+    const task = await prisma.task.findUnique({
+        where: { id: taskId },
+        include: { user: true },
+    });
+    const history = await prisma.history.findMany({
+        where: { taskId },
+        include: { user: true },
+        orderBy: { createdAt: "desc" },
+    });
+    return { task, history };
+}
+

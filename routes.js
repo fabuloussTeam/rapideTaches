@@ -1,7 +1,7 @@
 import express from 'express';
 const router = express.Router();
 import { PrismaClient } from '@prisma/client';
-import { addTask, deleteTask, getTasks, updateStatus } from './model/tasks.js';
+import { addTask, deleteTask, getTaskDetails, getTasks, updateStatus, updateTask } from './model/tasks.js';
 const prisma = new PrismaClient();
 
 // Page d'accueil
@@ -68,11 +68,9 @@ router.post('/delete/:id', async (req, res) => {
 router.get('/edit/:id', async (req, res) => {
     const taskId = parseInt(req.params.id);
     try {
-        const task = await prisma.task.findUnique({
-            where: { id: taskId },
-            include: { user: true }, // Inclure les informations de l'utilisateur assigné
-        });
-        const users = await prisma.user.findMany(); // Récupérer tous les utilisateurs pour le formulaire
+         const taskUser = await updateTask(taskId);
+        const task = taskUser.task;
+        const users = taskUser.users
         res.render('edit', { task, users });
     } catch (error) {
         console.error("Erreur lors de la récupération de la tâche:", error);
@@ -175,15 +173,11 @@ router.post('/update/:id', async (req, res) => {
 router.get('/task/:id', async (req, res) => {
     const taskId = parseInt(req.params.id);
     try {
-        const task = await prisma.task.findUnique({
-            where: { id: taskId },
-            include: { user: true }, // Inclure les informations de l'utilisateur assigné
-        });
-        const history = await prisma.history.findMany({
-            where: { taskId },
-            include: { user: true }, // Inclure les informations de l'utilisateur qui a modifié la tâche
-            orderBy: { changedAt: 'desc' }, // Trier par date de modification (du plus récent au plus ancien)
-        });
+       
+        const taskdetails = await getTaskDetails(taskId);
+        const task = taskdetails.task;
+        const history = taskdetails.history;
+
         if (task) {
             res.render('task-details', { task, history }); // Afficher la page de détails avec l'historique
         } else {
