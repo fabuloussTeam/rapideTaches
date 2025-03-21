@@ -75,3 +75,14 @@ export const getTaskDetails = async (taskId) => {
     return { task, history };
 }
 
+//cree un utilisateur
+export const createeUser = async (name) => {
+    const newUser = await prisma.user.create({
+        data: { 
+            name,
+            email
+         },
+    });
+    return newUser;
+}
+
