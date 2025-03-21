@@ -1,14 +1,16 @@
 import express from 'express';
 const router = express.Router();
 import { PrismaClient } from '@prisma/client';
+import { addTask, deleteTask, getTasks, updateStatus } from './model/tasks.js';
 const prisma = new PrismaClient();
 
 // Page d'accueil
 router.get('/', async (req, res) => {
-    const tasks = await prisma.task.findMany({
-        include: { user: true }, // Inclure les informations de l'utilisateur
-    });
-    const users = await prisma.user.findMany(); // Récupérer tous les utilisateurs
+   const gettasksandusers = await getTasks();
+    const tasks = gettasksandusers.tasks;
+    const users = gettasksandusers.users; 
+    
+    // Récupérer tous les utilisateurs
     res.render('index', { 
         titre: "Gestion de taches",
         styles: ["/css/style.css"],
@@ -18,73 +20,43 @@ router.get('/', async (req, res) => {
     });
 });
 
-// Créer un utilisateur
-router.post('/user/add', async (req, res) => {
-    const { name, email } = req.body;
-    if (!name || !email) {
-        return res.status(400).send("Le nom et l'email sont obligatoires.");
-    }
-    try {
-        await prisma.user.create({
-            data: {
-                name,
-                email,
-            },
-        });
-        res.redirect('/');
-    } catch (error) {
-        console.error("Erreur lors de la création de l'utilisateur:", error);
-        res.status(500).send("Erreur lors de la création de l'utilisateur.");
-    }
-});
 
 // Ajouter une tâche
 router.post('/add', async (req, res) => {
-    const { title, description, priority, dueDate, userId } = req.body;
-    await prisma.task.create({
-        data: {
-            title,
-            description,
-            priority,
-            dueDate: new Date(dueDate),
-            userId: parseInt(userId),
-            status: "À faire", // Statut par défaut
-        },
-    });
-    res.redirect('/');
+ 
+    try {
+        const { title, description, priority, dueDate, userId } = req.body;
+        const task = addTask(title, description, priority, dueDate, userId);
+        return res.status(200).redirect('/');
+    } catch (error) {
+        console.error("Erreur lors de l'ajout de la tâche:", error);
+    }
 });
 
 // Mettre à jour le statut d'une tâche
 router.post('/update-status/:id', async (req, res) => {
+      
+    try {
     const { id } = req.params;
     const { status } = req.body;
-    const updatedTask = await prisma.task.update({
-        where: { id: parseInt(id) },
-        data: { status },
-    });
-    console.log("Statut mis à jour:", updatedTask.status); // Log pour vérifier le statut
-    res.json({ status: updatedTask.status });
-});
+    const updatedTask = await updateStatus(parseInt(id), status);
 
+    console.log("Statut mis à jour:", updatedTask.status); // Log pour vérifier le statut
+    return res.status(200).json({ status: updatedTask.status, message: "Livre mis à jour avec succès" });
+    } catch (error) {
+        console.error("Erreur lors de la mise à jour du statut de la tâche:", error);
+        res.status(500).send("Erreur lors de la mise à jour du statut de la tâche.");
+    }
+});
 
 
 // Supprimer une tâche
 router.post('/delete/:id', async (req, res) => {
-    const taskId = parseInt(req.params.id);
 
     try {
-        // Supprimer les enregistrements liés dans la table History
-        await prisma.history.deleteMany({
-            where: { taskId },
-        });
-
-    
-        // Supprimer la tâche
-        await prisma.task.delete({
-            where: { id: taskId },
-        });
-
-        res.redirect('/'); // Rediriger vers la page d'accueil après la suppression
+        const taskId = parseInt(req.params.id);
+         const task = await deleteTask(taskId);
+        return res.redirect('/'); 
     } catch (error) {
         console.error("Erreur lors de la suppression de la tâche:", error);
         res.status(500).send("Erreur lors de la suppression de la tâche.");
@@ -92,7 +64,7 @@ router.post('/delete/:id', async (req, res) => {
 });
 
 
-// Afficher le formulaire de modification d'une tâche
+// modification d'une tâche
 router.get('/edit/:id', async (req, res) => {
     const taskId = parseInt(req.params.id);
     try {
@@ -246,6 +218,25 @@ router.get('/adduser', async (request, response) => {
 
 
 
+// Créer un utilisateur
+router.post('/user/add', async (req, res) => {
+    const { name, email } = req.body;
+    if (!name || !email) {
+        return res.status(400).send("Le nom et l'email sont obligatoires.");
+    }
+    try {
+        await prisma.user.create({
+            data: {
+                name,
+                email,
+            },
+        });
+        res.redirect('/');
+    } catch (error) {
+        console.error("Erreur lors de la création de l'utilisateur:", error);
+        res.status(500).send("Erreur lors de la création de l'utilisateur.");
+    }
+});
 
 
 export default router;
