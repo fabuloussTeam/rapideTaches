@@ -1,5 +1,6 @@
 import express from 'express';
 const router = express.Router();
+import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 import { addTask, 
     deleteTask,
@@ -9,6 +10,8 @@ import { addTask,
         updateTask,
         saveTask
      } from './model/tasks.js';
+
+import { validateDescription,isEmailValid,isPasswordValid } from './validation.js';
 const prisma = new PrismaClient();
 
 // Page d'accueil
@@ -146,7 +149,110 @@ router.get('/adduser', async (request, response) => {
     });
 });
 
+//page d'inscription
+router.get('/inscription', async (request, response) => {
+    response.render("inscription", {
+        titre: "Inscription",
+        styles: ["inscription.css"],
+        scripts: ["inscription.js"],
+    });
+});
 
+//page d'inscription post
+router.post('/inscription', async (req, res) => {
+    const { name, email, password, confirm_password } = req.body;
+
+    // Validation des données
+    if (!name || !email || !password || !confirm_password) {
+        return res.status(400).send("Tous les champs sont obligatoires.");
+    }
+    if (!isEmailValid(email)) {
+        return res.status(400).send("Email invalide.");
+    }
+    if (!isPasswordValid(password)) {
+        return res.status(400).send("Le mot de passe doit contenir entre 8 et 16 caractères.");
+    }
+    if (password !== confirm_password) {
+        return res.status(400).send("Les mots de passe ne correspondent pas.");
+    }
+
+    try {
+        // Vérifier si l'email existe déjà
+        const existingUser = await prisma.user.findUnique({ where: { email } });
+        if (existingUser) {
+            return res.status(400).send("Cet email est déjà utilisé.");
+        }
+        const hashedPassword = await bcrypt.hash(password, 10); // Hachage du mot de passe
+        // Créer l'utilisateur
+        await prisma.user.create({
+            data: {
+                name,
+                email,
+                password: hashedPassword, // Utiliser le mot de passe haché
+            },
+        });
+
+        // Rediriger vers la page d'inscription réussie
+        res.redirect('/inscriptionReussie');
+    } catch (error) {
+        console.error("Erreur lors de l'inscription:", error);
+        res.status(500).send("Erreur lors de l'inscription.");
+    }
+});
+
+//page de connexion
+router.get('/login', async (request, response) => {
+    response.render("login", {
+        titre: "Login",
+        styles: ["login.css"],
+        scripts: ["login.js"],
+    });
+});
+
+//page de connexion post
+router.post('/login', async (req, res) => {
+    console.log("Login request received:", req.body); // Log de la requête de connexion
+    
+    const { email, password } = req.body;
+
+    // Validation des données
+    if (!email || !password) {
+        return res.status(400).send("L'email et le mot de passe sont obligatoires.");
+    }
+    if (!isEmailValid(email)) {
+        return res.status(400).send("Email invalide.");
+    }
+
+    try {
+        // Vérifier si l'utilisateur existe
+        const user = await prisma.user.findUnique({ where: { email } });
+        if (!user) {
+            return res.status(400).send("Utilisateur non trouvé.");
+        }
+
+        // Vérifier le mot de passe
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(400).send("Mot de passe incorrect.");
+        }
+
+        // Authentification réussie
+        // Par cette ligne :
+        res.redirect('/');
+    } catch (error) {
+        console.error("Erreur lors de la connexion:", error);
+        res.status(500).send("Erreur lors de la connexion.");
+    }
+});
+
+// Page de inscription reussie
+router.get('/inscriptionReussie', async (request, response) => {
+    response.render("inscriptionReussie", {
+        titre: "Inscription réussie",
+        styles: ["inscription.css"],
+        scripts: ["inscription.js"],
+    });
+});
 
 // Créer un utilisateur
 router.post('/user/add', async (req, res) => {

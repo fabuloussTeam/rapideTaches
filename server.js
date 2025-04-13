@@ -30,6 +30,7 @@ app.set("views", "./views");
 // Middleware pour les fichiers statiques
 app.use(helmet(cspOption));
 app.use(express.static('public'));
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Ajout des routes

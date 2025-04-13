@@ -28,6 +28,7 @@ model User {
     id       Int       @id @default(autoincrement())
     name     String
     email    String    @unique
+    password String
     tasks    Task[]
     histories History[] // Add this line to establish the relation
 }
@@ -43,4 +44,3 @@ model History {
     task        Task     @relation(fields: [taskId], references: [id])
     user        User     @relation(fields: [userId], references: [id])
 }
-

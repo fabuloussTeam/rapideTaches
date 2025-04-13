@@ -5,18 +5,19 @@
     "main": "server.js",
     "type": "module",
     "scripts": {
-      "dev": "node server.js",
-      "prisma:generate": "prisma generate",
-      "prisma:migrate": "prisma migrate dev --name init" 
+        "dev": "node server.js",
+        "prisma:generate": "prisma generate",
+        "prisma:migrate": "prisma migrate dev --name init"
     },
     "dependencies": {
-      "@prisma/client": "^4.0.0",
-      "express": "^4.18.2",
-      "express-handlebars": "^7.0.7",
-      "helmet": "^6.0.0",
-      "path": "^0.12.7"
+        "@prisma/client": "^4.0.0",
+        "bcrypt": "^5.1.1",
+        "express": "^4.18.2",
+        "express-handlebars": "^7.0.7",
+        "helmet": "^6.0.0",
+        "path": "^0.12.7"
     },
     "devDependencies": {
-      "prisma": "^4.0.0"
+        "prisma": "^4.0.0"
     }
 }
