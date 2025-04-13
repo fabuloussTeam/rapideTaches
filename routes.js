@@ -15,7 +15,7 @@ import { validateDescription,isEmailValid,isPasswordValid } from './validation.j
 const prisma = new PrismaClient();
 
 // Page d'accueil
-router.get('/', async (req, res) => {
+router.get('/',isAuthenticated, async (req, res) => {
    const gettasksandusers = await getTasks();
     const tasks = gettasksandusers.tasks;
     const users = gettasksandusers.users; 
@@ -32,7 +32,7 @@ router.get('/', async (req, res) => {
 
 
 // Ajouter une tâche
-router.post('/add', async (req, res) => {
+router.post('/add',isAuthenticated, async (req, res) => {
  
     try {
         const { title, description, priority, dueDate, userId } = req.body;
@@ -109,7 +109,7 @@ router.post('/update/:id', async (req, res) => {
 
 
 // Afficher les détails d'une tâche
-router.get('/task/:id', async (req, res) => {
+router.get('/task/:id',isAuthenticated, async (req, res) => {
     const taskId = parseInt(req.params.id);
     try {
        
@@ -130,7 +130,7 @@ router.get('/task/:id', async (req, res) => {
 
 
 //page de creation de compte
-router.get('/addtask', async (request, response) => {
+router.get('/addtask',isAuthenticated, async (request, response) => {
     const users = await prisma.user.findMany();
     response.render("add-task", {
         titre: "add a task ",
@@ -141,13 +141,21 @@ router.get('/addtask', async (request, response) => {
 });
 
 //page de creation de compte
-router.get('/adduser', async (request, response) => {
+router.get('/adduser',isAuthenticated, async (request, response) => {
     response.render("add-user", {
         titre: "add a user",
         styles: ["add-user.css"],
         scripts: ["add-user.js"],
     });
 });
+// Middleware pour vérifier si l'utilisateur est connecté
+function isAuthenticated(req, res, next) {
+    if (req.session.user) {
+        return next();
+    }
+    res.redirect('/login');
+}
+
 
 //page d'inscription
 router.get('/inscription', async (request, response) => {
@@ -209,35 +217,28 @@ router.get('/login', async (request, response) => {
     });
 });
 
-//page de connexion post
+// Route de connexion
 router.post('/login', async (req, res) => {
-    console.log("Login request received:", req.body); // Log de la requête de connexion
-    
     const { email, password } = req.body;
 
-    // Validation des données
     if (!email || !password) {
         return res.status(400).send("L'email et le mot de passe sont obligatoires.");
     }
-    if (!isEmailValid(email)) {
-        return res.status(400).send("Email invalide.");
-    }
 
     try {
-        // Vérifier si l'utilisateur existe
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
             return res.status(400).send("Utilisateur non trouvé.");
         }
 
-        // Vérifier le mot de passe
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(400).send("Mot de passe incorrect.");
         }
 
-        // Authentification réussie
-        // Par cette ligne :
+        // Stocker l'utilisateur dans la session
+        req.session.user = { id: user.id, email: user.email, name: user.name };
+
         res.redirect('/');
     } catch (error) {
         console.error("Erreur lors de la connexion:", error);
@@ -253,6 +254,20 @@ router.get('/inscriptionReussie', async (request, response) => {
         scripts: ["inscription.js"],
     });
 });
+
+// Route de déconnexion
+router.get('/logout', (req, res) => {
+    // Détruire la session
+    req.session.destroy((err) => {
+        if (err) {
+            console.error("Erreur lors de la déconnexion :", err);
+            return res.status(500).send("Erreur lors de la déconnexion.");
+        }
+        // Rediriger vers la page de connexion
+        res.redirect('/login');
+    });
+});
+
 
 // Créer un utilisateur
 router.post('/user/add', async (req, res) => {
