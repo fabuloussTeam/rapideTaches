@@ -217,6 +217,7 @@ router.get('/login', async (request, response) => {
     });
 });
 
+
 // Route de connexion
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -268,6 +269,24 @@ router.get('/logout', (req, res) => {
     });
 });
 
+//Route pour get historique
+router.get('/historique/:id', async (req, res) => {
+    const taskId = parseInt(req.params.id);
+    try {
+        const taskdetails = await getTaskDetails(taskId);
+        const task = taskdetails.task;
+        const history = taskdetails.history;
+
+        if (task) {
+            res.render('historique', { task, historique:history }); // Afficher la page de détails avec l'historique
+        } else {
+            res.status(404).send("Tâche non trouvée.");
+        }
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'historique:", error);
+        res.status(500).send("Erreur lors de la récupération de l'historique.");
+    }
+});
 
 // Créer un utilisateur
 router.post('/user/add', async (req, res) => {

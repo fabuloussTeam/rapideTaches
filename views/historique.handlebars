@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Tâches</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Historique des Tâches</h1>
+    </header>
+    <main>
+        {{#if historique}}
+        <ul>
+            {{#each historique}}
+            <li>
+                <strong>Date :</strong> {{formatDate this.changedAt}} <br>
+                <strong>Action :</strong> Modification de {{this.field}} <br>
+                <strong>Utilisateur :</strong> {{this.user.name}}
+            </li>
+            {{/each}}
+        </ul>
+        {{else}}
+        <p>Aucun historique disponible pour cette tâche.</p>
+        {{/if}}
+    </main>
+</body>
+
+</html>

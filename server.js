@@ -51,6 +51,8 @@ const handlebars = expressHandlebars.create({
     },
 });
 
+app.engine('.handlebars', handlebars.engine);
+app.set('view engine', '.handlebars');
 app.engine('handlebars', handlebars.engine);
 app.set('view engine', 'handlebars');
 app.set("views", "./views");

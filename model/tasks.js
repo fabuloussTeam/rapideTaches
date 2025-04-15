@@ -148,7 +148,7 @@ export const getTaskDetails = async (taskId) => {
     const history = await prisma.history.findMany({
         where: { taskId },
         include: { user: true },
-        orderBy: { createdAt: "desc" },
+        orderBy: { changedAt: "desc" },
     });
     return { task, history };
 }
