@@ -4,7 +4,11 @@
         <a href="/">Accueil</a>
         <a href="/addtask">Ajouter une tache</a>
         <a href="/inscription">Inscritption</a>
+        {{#if isAuthenticated}}
+        <a href="/logout">Déconnexion</a>
+        <span>Bienvenue, {{user.name}}</span>
+        {{else}}
         <a href="/login">Connexion</a>
-
+        {{/if}}
     </nav>
 </header>
