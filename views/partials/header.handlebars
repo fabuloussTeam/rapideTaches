@@ -1,14 +1,24 @@
 <header>
     <h1>Gestion des Tâches</h1>
     <nav>
-        <a href="/">Accueil</a>
-        <a href="/addtask">Ajouter une tache</a>
-        <a href="/inscription">Inscritption</a>
         {{#if isAuthenticated}}
-        <a href="/logout">Déconnexion</a>
+        <a href="/">
+            <i class="fas fa-home"></i> <!-- Icône d'accueil -->
+        </a>
+        <a href="/addtask">
+            <i class="fas fa-plus-circle"></i> <!-- Icône pour ajouter une tâche -->
+        </a>
+        <a href="/logout">
+            <i class="fas fa-sign-out-alt"></i> <!-- Icône de déconnexion -->
+        </a>
         <span>Bienvenue, {{user.name}}</span>
         {{else}}
-        <a href="/login">Connexion</a>
+        <a href="/login">
+            <i class="fas fa-sign-in-alt"></i> <!-- Icône de connexion -->
+        </a>
+        <a href="/inscription">
+            <i class="fas fa-user-plus"></i> <!-- Icône d'inscription -->
+        </a>
         {{/if}}
     </nav>
 </header>

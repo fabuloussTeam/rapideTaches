@@ -226,6 +226,8 @@ router.post('/login', async (req, res) => {
         return res.status(400).send("L'email et le mot de passe sont obligatoires.");
     }
 
+    
+
     try {
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
@@ -234,6 +236,8 @@ router.post('/login', async (req, res) => {
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
+            console.log(user.password, password);
+
             return res.status(400).send("Mot de passe incorrect.");
         }
 
