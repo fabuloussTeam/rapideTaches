@@ -1,0 +1,32 @@
+<form id="create-task-form">
+    <label for="title">Titre :</label>
+    <input type="text" id="title" name="title" required minlength="3" maxlength="100">
+
+    <label for="description">Description :</label>
+    <textarea id="description" name="description"></textarea>
+
+    <label for="priority">Priorité :</label>
+    <select id="priority" name="priority" required>
+        <option value="1">Faible</option>
+        <option value="2">Moyen</option>
+        <option value="3">Élevé</option>
+    </select>
+
+    <label for="status">Statut :</label>
+    <select id="status" name="status" required>
+        <option value="1">À faire</option>
+        <option value="2">En cours</option>
+        <option value="3">En révision</option>
+        <option value="4">Terminé</option>
+    </select>
+
+    <label for="dueDate">Date limite :</label>
+    <input type="date" id="dueDate" name="dueDate" required>
+
+    <label for="assignedTo">Assigné à :</label>
+    <select id="assignedTo" name="assignedTo" required>
+          <option value={{user.id}}> {{user.username}}</option> 
+    </select>
+
+    <button type="submit">Créer la tâche</button>
+</form>

@@ -1,24 +1,18 @@
 <header>
-    <h1>Gestion des Tâches</h1>
-    <nav>
-        {{#if isAuthenticated}}
-        <a href="/">
-            <i class="fas fa-home"></i> <!-- Icône d'accueil -->
-        </a>
-        <a href="/addtask">
-            <i class="fas fa-plus-circle"></i> <!-- Icône pour ajouter une tâche -->
-        </a>
-        <a href="/logout">
-            <i class="fas fa-sign-out-alt"></i> <!-- Icône de déconnexion -->
-        </a>
-        <span>Bienvenue, {{user.name}}</span>
-        {{else}}
-        <a href="/login">
-            <i class="fas fa-sign-in-alt"></i> <!-- Icône de connexion -->
-        </a>
-        <a href="/inscription">
-            <i class="fas fa-user-plus"></i> <!-- Icône d'inscription -->
-        </a>
-        {{/if}}
-    </nav>
+  <img src="/assets/icons8-to-do-list-96.png" alt="Accuiel" class="logo">
+  <h1>Gestion des tâches</h1>
+  <nav>
+    
+     {{#if user}}
+        <a href="/allTasks"><img src="/assets/icons8-home.gif" alt="Accuiel" class="icons"></a>
+        <a href="/Profil"><img src="/assets/icons8-account-50.png" alt="Profil" class="icons"></a>
+        <a href="/task"><img src="/assets/icons8-create-50.png" alt="Creer une tache" class="icons"></a>
+        <form method="post" action="/deconnexion">
+           <input type="submit" value="Deconnexion" />
+        </form>
+     {{/if }}
+     {{#unless user}}
+         <a href="/connexion">Connexion</a>
+     {{/unless}}
+  </nav>
 </header>

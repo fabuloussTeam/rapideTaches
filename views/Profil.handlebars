@@ -1,0 +1,18 @@
+<h2>Bienvenue {{this.nom}}</h2>
+
+<ul>
+  
+  {{#each tasks}}
+    <li>
+      <div> {{this.title}}</div>
+      <div> {{this.description}}</div>
+      <div> {{this.priority.name}}</div>
+      <div> {{this.status.name}}</div>
+      <div> {{this.assignedTo.username}}</div>
+      <div> {{this.dueDate}}</div>
+      <a href="/edit/{{this.id}}"><img src="/assets/icons8-edit.gif" alt="modifier" class="icon"></a>
+      <input type="button" data-id="{{this.id}}" value="×" />
+    </li>
+  {{/each}}
+ 
+</ul>

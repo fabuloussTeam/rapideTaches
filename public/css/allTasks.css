@@ -1,0 +1,101 @@
+main {
+  background: #c1d9ec;
+  display: flex;
+  justify-content: center; 
+  gap: 20px;
+  padding: 20px;
+  height: calc(100vh - 40px);
+  max-width: 1200px; 
+  margin: 0 auto; 
+}
+ .icon {
+  width: 25px;
+  height: 25px;
+  transition: transform 0.3s ease;
+
+}
+/* Chaque section = une colonne */
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f4f4f4;
+  max-height: 100%;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  max-width: 300px; 
+}
+
+/* Entête de la colonne */
+.column h3 {
+  color: #fff;
+  padding: 15px;
+  margin: 0;
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+/* Couleurs personnalisées pour chaque colonne */
+.a-faire h3 {
+  background-color: #e74c3c; 
+}
+
+.en-cours h3 {
+  background-color: #f39c12; 
+}
+
+.en-revision h3 {
+  background-color: #3498db; 
+}
+
+.terminee h3 {
+  background-color: #27ae60; 
+}
+
+/* Zone des cartes */
+ul {
+  list-style-type: none;
+  padding: 10px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+}
+
+/* Style des cartes */
+li {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+li div {
+  margin-bottom: 5px;
+}
+
+li a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+li a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  main {
+      flex-direction: column;
+      height: auto;
+      align-items: center; 
+  }
+  .column {
+      max-height: none;
+      width: 100%; 
+      max-width: 400px; 
+  }
+}

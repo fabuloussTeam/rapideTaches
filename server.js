@@ -1,86 +1,106 @@
-import express from 'express';
-import expressHandlebars from 'express-handlebars';
-import { PrismaClient } from '@prisma/client';
-import cspOption from "./csp-options.js";
-import helmet from 'helmet';
-import session from 'express-session';
-import https from 'https';
-import fs from 'fs';
-import cspOptions from './csp-options.js'; // Importer les options CSP
-const prisma = new PrismaClient();
+//Doit etre en debut de fichier pour charger les variables d'environnement
+import "dotenv/config";
 
-const app = express(); // Initialize the app
-// Charger les certificats SSL
-const sslOptions = {
-    key: fs.readFileSync('./certs/server.key'), // Chemin vers la clé privée
-    cert: fs.readFileSync('./certs/server.cert') // Chemin vers le certificat
-};
+//Pour le HTTPS
+import https from "node:https";
+import { readFile } from "node:fs/promises";
 
-// Démarrer le serveur HTTPS
-https.createServer(sslOptions, app).listen(443, () => {
-    console.log('Serveur démarré en HTTPS sur https://localhost:443');
-});
-
-// Démarrer un serveur HTTP pour rediriger vers HTTPS
-app.listen(80, () => {
-    console.log('Serveur HTTP démarré sur http://localhost:80');
-    console.log('Redirection vers HTTPS activée.');
-});
-
-app.use((req, res, next) => {
-    if (!req.secure) {
-        // Rediriger les requêtes HTTP vers HTTPS
-        return res.redirect(`https://${req.headers.host}${req.url}`);
-    }
-    next();
-});
 // Importer les routes
 import routerExterne from "./routes.js";
 
+// Importation des fichiers et librairies
+//import { engine } from "express-handlebars";
+import express, { json } from "express";
+import helmet from "helmet";
+import compression from "compression";
+import cors from "cors";
+import cspOption from "./csp-options.js";
+import { create } from "express-handlebars";
+import moment from "moment";
+
+// Importation de la session
+import session from "express-session";
+//importation de memorystore
+import memorystore from "memorystore";
+// Importation de passport
+import passport from "passport";
+
+import "./authentification.js";
 
 // Configuration de Handlebars
-const handlebars = expressHandlebars.create({
-    extname: '.handlebars',
+const hbs = create({
     helpers: {
-        formatDate: function (date) {
-            return new Date(date).toLocaleString(); // Formater la date
+        formatDate: (date, format = "DD/MM/YYYY HH:mm") => {
+            if (typeof format !== 'string') {
+                format = "DD/MM/YYYY HH:mm"; // Valeur par défaut si ce n'est pas une chaîne
+            }
+            return moment(date).format(format);
         },
         eq: function (a, b) {
-            return a === b; // Helper pour comparer des valeurs
-        },
-    },
+            return a === b;
+          }
+    }
 });
 
-app.engine('.handlebars', handlebars.engine);
-app.set('view engine', '.handlebars');
-app.engine('handlebars', handlebars.engine);
-app.set('view engine', 'handlebars');
-app.set("views", "./views");
+// Création du serveur express
+const app = express();
 
-// Middleware pour les fichiers statiques
-app.use(helmet(cspOptions)); // Utiliser Helmet avec les options CSP
-app.use(express.static('public'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+//initialisation de la memoire de session
+const MemoryStore = memorystore(session);
 
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'default_secret_key', 
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: true }
-}));
+app.engine("handlebars",  hbs.engine); //Pour indiquer a express que l'on utilise handlebars
+app.set("view engine", "handlebars"); // Pour indiquer le rendu des vues
+app.set("views", "./views"); // Pour indiquer le dossier des vues
 
-// Middleware pour passer l'état de connexion à toutes les vues
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = !!req.session.user; // Vérifie si l'utilisateur est connecté
-    res.locals.user = req.session.user || null; // Passe les informations de l'utilisateur si connecté
-    next();
-});
+// Ajout de middlewares
+app.use(helmet(cspOption));
+app.use(compression());
+app.use(cors());
+app.use(json());
+
+//Middeleware pour gerer les sessions
+app.use(
+    session({
+        cookie: { maxAge: 3600000 },
+        name: process.env.npm_package_name,
+        store: new MemoryStore({ checkPeriod: 3600000 }),
+        resave: false,
+        saveUninitialized: false,
+        secret: process.env.SESSION_SECRET,
+    })
+);
+
+//Middleware pour gerer passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Middleware intégré à express pour gérer la partie statique du serveur
+// Le dossier 'public' est la partie statique de notre serveur
+app.use(express.static("public"));
+
 // Ajout des routes
 app.use(routerExterne);
 
-/* // Démarrer le serveur
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Serveur démarré sur https://localhost:${PORT}`);
-}); */
+// Renvoyer une erreur 404 pour les routes non définies
+app.use((request, response) => {
+    // Renvoyer simplement une chaîne de caractère indiquant que la page n'existe pas
+    response.status(404).send(`${request.originalUrl} Route introuvable.`);
+});
+
+
+//Demarrer le serveur
+//Usage du HTTPS
+if (process.env.NODE_ENV === "development") {
+    let credentials = {
+        key: await readFile("./security/localhost.key"),
+        cert: await readFile("./security/localhost.cert"),
+    };
+ 
+    https.createServer(credentials, app).listen(process.env.PORT);
+    console.info("Serveur démarré avec succès: ");
+    console.log("https://localhost:" + process.env.PORT);
+} else {
+    app.listen(process.env.PORT);
+    console.info("Serveur démarré avec succès: ");
+    console.info("http://localhost:" + process.env.PORT);
+}

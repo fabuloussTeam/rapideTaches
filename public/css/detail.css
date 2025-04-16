@@ -1,0 +1,76 @@
+/* Conteneur principal */
+.task-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: #c1d9ec;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Style pour les détails de la tâche */
+.task-details div {
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    color: #4a5568;
+}
+
+/* Titre de la tâche */
+.task-details div:first-child {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+}
+
+/* Style pour les labels */
+.task-details div strong {
+    font-weight: 500;
+    color: #2d3748;
+    margin-right: 0.5rem;
+}
+
+/* Style pour la date limite */
+.task-details div:nth-last-child(1) {
+    font-weight: 500;
+    color: #e53e3e; 
+}
+
+/* Effet de survol sur les détails */
+.task-details div:hover {
+    background-color: #f7fafc;
+    border-radius: 6px;
+    padding: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .task-container {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .task-details div {
+        font-size: 0.95rem;
+    }
+
+    .task-details div:first-child {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .task-container {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+    .task-details div {
+        font-size: 0.9rem;
+    }
+
+    .task-details div:first-child {
+        font-size: 1.2rem;
+    }
+}
