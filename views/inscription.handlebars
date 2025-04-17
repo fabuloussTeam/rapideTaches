@@ -1,17 +1,31 @@
-        <!-- Formulaire pour ajouter un utilisateur -->
-        <h2 style="text-align: center;">Inscritption</h2>
-        <form action="/inscription" method="POST">
-            <label for="name">Nom et prenom:</label>
-            <input type="text" id="name" name="name" required>
-
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="password">Mot de passe:</label>
-            <input type="password" id="password" name="password" required>
-
-            <label for="confirm_password">Confirmer le mot de passe:</label>
-            <input type="password" id="confirm_password" name="confirm_password" required>
-
-            <button type="submit">Inscritption</button>
-        </form> 
+ <div class="container">
+    <div class="left-panel">
+      <div class="logo"><img src="/assets/icons8-to-do-list-96.png" alt="logo"></div>
+      <h2>Inscription</h2>
+      <p class="subtitle">Veuillez remplir les champs pour créer un compte</p>
+      <form id="new-compte">
+        <div class="form-group">
+          <input type="text" id="input-nom" placeholder="Nom" required>
+        </div>
+        <div class="form-group">
+          <input type="email" id="input-courriel" placeholder="Adresse e-mail" required>
+        </div>
+        <div class="form-group">
+          <select id="type" name="type" required>
+            <option value="">-- Sélectionner un type --</option>
+            <option value="Administrateur">Administrateur</option>
+            <option value="simple user">Utilisateur simple</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <input type="password" id="input-motdepasse" placeholder="Mot de passe (min. 8 caractères)" required minlength="8" maxlength="100">
+        </div>
+        <input type="submit" value="Inscription">
+        <div id="erreur-auth"></div>
+      </form>
+      <div class="signup-link">Tu as déjà un compte ? <a href="/connexion">Connexion</a></div>
+    </div>
+    <div class="right-panel">
+      <img src="/assets/pexels-towfiqu-barbhuiya-3440682-11412596.jpg" alt="Illustration" class="illustration">
+    </div>
+  </div>

@@ -1,0 +1,46 @@
+<div class="task-container">
+   <div class="task-details">
+     <h2>Détails de la Tâche</h2>
+     <div><strong>Titre:</strong> {{task.title}}</div>
+     <div><strong>Description: </strong>{{task.description}}</div>
+     <div><strong>Priorité: </strong>{{task.priority.name}}</div>
+     <div><strong>Statut :</strong>{{task.status.name}}</div>
+     <div><strong>Assignée à:</strong> {{task.assignedTo.username}}</div>
+     <div><strong>Date limite:</strong> {{formatDate task.dueDate}}</div>
+    </div>
+ </div>
+
+ <h1>Historique de la Tâche</h1>
+
+{{#if taskHistory.length}}
+    <table border="1">
+        <thead>
+            <tr>
+               
+                <th>Tâche</th>
+                <th>Modifié par</th>
+                <th>Description</th>
+                <th>Statut</th>
+                 <th>Priorité</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each taskHistory}}
+            <tr>
+                
+                <td>{{this.oldTitle}}</td>  
+                <td>{{this.modifiedBy.username}}</td>
+                <td>{{this.oldDescription}}</td>
+                <td>{{this.oldStatus}}</td>
+                 <td>{{this.oldPriority}}</td>
+                <td>{{formatDate this.modifiedAt }}</td>  
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+{{else}}
+    <p>Aucun historique disponible.</p>
+{{/if}}
+
+<a href="/allTasks">Retour à l'accueil</a>

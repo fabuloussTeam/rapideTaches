@@ -1,0 +1,85 @@
+.left-panel {
+    flex: 1;
+    padding: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #fff;
+  }
+
+  .logo {
+    font-weight: bold;
+    font-size: 20px;
+    margin-bottom: 40px;
+  }
+
+  .logo span {
+    color: #0d65ad;
+    margin-right: 8px;
+  }
+
+  h1, h2 {
+    margin-bottom: 10px;
+  }
+
+  p.subtitle {
+    margin-bottom: 30px;
+    color: #666;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  .form-group {
+    margin-bottom: 15px;
+  }
+
+  button.signin,
+  input[type="submit"] {
+    background-color: #0d65ad;
+    color: #fff;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+  }
+
+  .signup-link {
+    text-align: center;
+    font-size: 14px;
+    margin-top: 15px;
+  }
+
+  .signup-link a {
+    text-decoration: none;
+    color: #0d65ad;
+    font-weight: bold;
+  }
+
+  .right-panel {
+    flex: 1;
+    background-color: #c1d9ec;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+  }
+
+  .illustration {
+    max-width: 100%;
+    height: auto;
+  }
+
+  #erreur-auth {
+    color: red;
+    margin-top: 10px;
+    font-size: 14px;
+  }

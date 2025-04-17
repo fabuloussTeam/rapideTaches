@@ -13,7 +13,7 @@ formConnexion.addEventListener("submit", async (event) => {
         password: inputMotDePasse.value,
     };
  
-    let response = await fetch("/login", {
+    let response = await fetch("/connexion", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -22,7 +22,7 @@ formConnexion.addEventListener("submit", async (event) => {
     if (response.ok) {
         // Si l'authentification est réussi, on
         // redirige vers une autre page
-        window.location.replace("/");
+        window.location.replace("/allTasks");
     } else {
         // Si l'authentification ne réussi pas, on
         // a le message d'erreur dans l'objet "data"
@@ -34,5 +34,3 @@ formConnexion.addEventListener("submit", async (event) => {
         // l'utilisateur ici ...
     }
 });
- 
- 
